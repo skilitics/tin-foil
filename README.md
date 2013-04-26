@@ -9,7 +9,7 @@ Install the module with: `npm install tin-foil`
 
 Define your verbs, objects and contexts by extending Verb, TinCanObject and Context:
 
-*CoffeeScript*
+**CoffeeScript**
 
 ``` CoffeeScript
 { TinCanObject } = require 'tin-foil'
@@ -20,7 +20,7 @@ class SceneObject extends TinCanObject
   @named_from (event) -> event.scene.title
 ```
 
-*JavaScript*
+**JavaScript**
 
 ``` JavaScript
 var SceneObject = TinCanObject.extend()
@@ -38,10 +38,16 @@ class SceneEnteredEvent extends TinFoilEvent
   @as 'user', i: 'entered', a: 'scene', in: 'scenario'
 ```
 
-or generate them on the fly
+or build them on the fly
 
 ``` CoffeeScript
 SceneEnteredEvent = Statement.as 'user', i: 'entered', a: 'scene', in: 'scenario'
+```
+
+and compile your events
+
+``` CoffeeScript
+tinCan = SceneEnteredEvent.compile(myEvent)
 ```
 
 ## License
