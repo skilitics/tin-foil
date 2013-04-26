@@ -26,7 +26,7 @@ class Statement
 
     if options.in then @in(options.in)
 
-    if options.resulting_in then @resulting_in(options.results_in)
+    if options.resulting_in then @resulting_in(options.resulting_in)
 
     this
 
@@ -50,25 +50,10 @@ class Statement
 
   # Compiliation
   compile: (event) ->
-    id: @compileId(event)
-    actor: @compileActor(event)
-    verb: @compileVerb(event)
-    object: @compileObject(event)
-    context: @compileContext(event)
-
-  compileId: (event) ->
-
-  compileActor: (event) ->
-    throw "Actor required" unless @actorDescriptor
-
-  compileVerb: (event) ->
-    throw "Verb required" unless @verbDescriptor
-
-  compileObject: (event) ->
-    throw "Object required" unless @objectDescriptor
-
-  compileContext: (event) ->
-    throw "Context required" unless @contextDescriptor
-
+    actor: @actor?.compile event
+    verb: @verb?.compile()
+    object: @object?.complie event
+    context: @context?.complie event
+    result: @result?.complie event
 
 module.exports = Statement

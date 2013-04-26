@@ -1,43 +1,59 @@
-Statement = require '../lib/statement'
+{ Statement, Agent, Verb, TinCanObject, Context, Result } = require '../lib'
 
 describe 'Statement', ->
   before ->
-    @user = 'Steve'
-    @verb = 'completed'
-    @object = 'scene'
-    @context = 'scenario'
-    @result = 'score'
-
-  beforeEach ->
-    @statement = new Statement
+    @user = Agent.extend().named 'Steve'
+    @verb = Verb.extend().displayed_as 'en-US': 'completed'
+    @tinCanObject = TinCanObject.extend().named 'scene'
+    @context = Context.extend()
+    @result = Result.extend()
 
   describe 'Fluent API', ->
-    it 'should set the "Actor" from "as"', ->
-      @statement.as @user
-      @statement.actor.should.equal @user
+    beforeEach -> @statement = new Statement
 
-    it 'should set the "Verb" from "i"', ->
-      @statement.i @verb
-      @statement.verb.should.equal @verb
+    describe 'as', ->
+      beforeEach -> @r = @statement.as @user
+      it 'should set the "Actor"', -> @r.actor.should.equal @user
+      it 'should be chainable', -> @r.should.equal @statement
 
-    it 'should set the "Object" from "a"', ->
-      @statement.a @object
-      @statement.object.should.equal @object
+      describe 'with "options"', ->
+        beforeEach -> @r = @statement.as @user, i: @verb, a: @tinCanObject, in: @context, resulting_in: @result
+        it 'should set the "Actor"', -> @r.actor.should.equal @user
+        it 'should set the "Verb"', -> @r.verb.should.equal @verb
+        it 'should set the "Object"', -> @r.object.should.equal @tinCanObject
+        it 'should set the "Context"', -> @r.context.should.equal @context
+        it 'should set the "Result"', -> @r.result.should.equal @result
 
-    it 'should set the "Context" from "in"', ->
-      @statement.in @context
-      @statement.context.should.equal @context
+    describe 'i', ->
+      beforeEach -> @r = @statement.i @verb
+      it 'should set the "Verb"', -> @r.verb.should.equal @verb
+      it 'should be chainable', -> @r.should.equal @statement
 
-    it 'should set the "Result" from "resulting_in"', ->
-      @statement.resulting_in @result
-      @statement.result.should.equal @result
+    describe 'a', ->
+      beforeEach -> @r = @statement.a @tinCanObject
+      it 'should set the "Object"', -> @r.object.should.equal @tinCanObject
+      it 'should be chainable', -> @r.should.equal @statement
 
-    it 'should be fluent', ->
-      ###s = Statement.as @user, i: @verb, an: @object, in: @context, resulting_in: @result
-      s.actor.should.equal @user
-      s.verb.should.equal @verb
-      s.object.should.equal @object
-      s.context.should.equal @context
-      s.result.should.equal @result###
+    describe 'in', ->
+      beforeEach -> @r = @statement.in @context
+      it 'should set the "Context"', -> @r.context.should.equal @context
+      it 'should be chainable', -> @r.should.equal @statement
 
-#  describe 'Compiliation...'
+    describe 'resulting_in', ->
+      beforeEach -> @r = @statement.resulting_in @result
+      it 'should set the "Result"', -> @r.result.should.equal @result
+      it 'should be chainable', -> @r.should.equal @statement
+
+  describe 'Compiliation', ->
+
+    beforeEach ->
+      @event = {}
+      @statement = new Statement()
+      @statement.as @user, i: @verb, a: @tinCanObject, in: @context, resulting_in: @result
+      @statement.complie @event
+
+    it 'should set the "actor"', -> @r.actor.should.equal @actor.compile @event
+    it 'should set the "verb"', -> @r.verb.should.equal @verb.compile()
+    it 'should set the "object"', -> @r.object.should.equal @tinCanObject.complie @event
+    it 'should set the "context"', -> @r.context.should.equal @context.complie @event
+    it 'should set the "result"', -> @r.result.should.equal @result.complie @event
