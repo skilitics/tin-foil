@@ -6,6 +6,7 @@ class Agent extends TinCanObject
   @of_type 'Agent'
 
   # Override TinCanObject name
+  @name_from: (fn) -> @named fn
   @named: (name) ->
     @agentName = name
     this
@@ -15,9 +16,10 @@ class Agent extends TinCanObject
     @mbox = mbox
     this
 
-  @complie: (event) ->
-    agent = super.complie(event)
+  @compile: (event) ->
+    agent = super(event)
     agent.name = Util.callOrReturn(this, @agentName, event)
     agent.mbox = Util.callOrReturn(this, @mbox, event)
+    agent
 
 module.exports = Agent

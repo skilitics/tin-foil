@@ -52,8 +52,8 @@ class Statement
   compile: (event) ->
     actor: @actor?.compile event
     verb: @verb?.compile()
-    object: @object?.complie event
-    context: @context?.complie event
-    result: @result?.complie event
+    object: @object?.compile event
+    context: @context?.compile event
+    result: @result?.compile event
 
 module.exports = Statement

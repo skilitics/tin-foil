@@ -6,7 +6,7 @@ describe 'Statement', ->
     @verb = Verb.extend().displayed_as 'en-US': 'completed'
     @tinCanObject = TinCanObject.extend().named 'scene'
     @context = Context.extend()
-    @result = Result.extend()
+    @result = Result.extend().scored_as '1'
 
   describe 'Fluent API', ->
     beforeEach -> @statement = new Statement
@@ -50,10 +50,30 @@ describe 'Statement', ->
       @event = {}
       @statement = new Statement()
       @statement.as @user, i: @verb, a: @tinCanObject, in: @context, resulting_in: @result
-      @statement.complie @event
+      @r = @statement.compile @event
 
-    it 'should set the "actor"', -> @r.actor.should.equal @actor.compile @event
-    it 'should set the "verb"', -> @r.verb.should.equal @verb.compile()
-    it 'should set the "object"', -> @r.object.should.equal @tinCanObject.complie @event
-    it 'should set the "context"', -> @r.context.should.equal @context.complie @event
-    it 'should set the "result"', -> @r.result.should.equal @result.complie @event
+    it 'should set the "actor"', ->
+      compiled = JSON.stringify(@r.actor)
+      original = JSON.stringify(@user.compile())
+      compiled.should.equal original
+
+    it 'should set the "verb"', ->
+      compiled = JSON.stringify(@r.verb)
+      original = JSON.stringify(@verb.compile())
+      compiled.should.equal original
+
+    it 'should set the "object"', ->
+      JSON.stringify(@r.object).should.equal JSON.stringify(@tinCanObject.compile @event)
+      compiled = JSON.stringify(@r.object)
+      original = JSON.stringify(@tinCanObject.compile())
+      compiled.should.equal original
+
+    it 'should set the "context"', ->
+      compiled = JSON.stringify(@r.context)
+      original = JSON.stringify(@context.compile())
+      compiled.should.equal original
+
+    it 'should set the "result"', ->
+      compiled = JSON.stringify(@r.result)
+      original = JSON.stringify(@result.compile())
+      compiled.should.equal original
