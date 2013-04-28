@@ -24,9 +24,11 @@ class Statement
     if options.an then @an options.an
     if options.a then @a options.a
 
-    if options.in then @in(options.in)
+    if options.in_a then @in_a options.in_a
+    if options.in then @in options.in
 
-    if options.resulting_in then @resulting_in(options.resulting_in)
+    if options.resulting_in_a then @resulting_in_a options.resulting_in_a
+    if options.resulting_in then @resulting_in options.resulting_in
 
     this
 
@@ -34,16 +36,18 @@ class Statement
     @verb = verb
     this
 
-  for_a: (object) -> a(object)
-  an: (object) -> a(object)
+  for_a: (object) -> @a object
+  an: (object) -> @a object
   a: (object) ->
     @object = object
     this
 
+  in_a: (context) -> @in context
   in: (context) ->
     @context = context
     this
 
+  resulting_in_a: (result) -> @resulting_in result
   resulting_in: (result) ->
     @result = result
     this

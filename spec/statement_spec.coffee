@@ -1,4 +1,5 @@
 { Statement, Agent, Verb, TinCanObject, Context, Result } = require '../lib'
+statement = require './behaviours/statement'
 
 describe 'Statement', ->
   before ->
@@ -46,34 +47,29 @@ describe 'Statement', ->
 
   describe 'Compiliation', ->
 
-    beforeEach ->
+    before ->
       @event = {}
-      @statement = new Statement()
-      @statement.as @user, i: @verb, a: @tinCanObject, in: @context, resulting_in: @result
-      @r = @statement.compile @event
+      @user = Agent.extend().named 'Steve'
+      @completed = Verb.extend().displayed_as 'en-US': 'completed'
+      @scene = TinCanObject.extend().named 'scene'
+      @scenario = Context.extend()
+      @score = Result.extend().scored_as '1'
 
-    it 'should set the "actor"', ->
-      compiled = JSON.stringify(@r.actor)
-      original = JSON.stringify(@user.compile())
-      compiled.should.equal original
+    beforeEach ->
+      @statement = new Statement
 
-    it 'should set the "verb"', ->
-      compiled = JSON.stringify(@r.verb)
-      original = JSON.stringify(@verb.compile())
-      compiled.should.equal original
+    describe 'with classes passed in', ->
 
-    it 'should set the "object"', ->
-      JSON.stringify(@r.object).should.equal JSON.stringify(@tinCanObject.compile @event)
-      compiled = JSON.stringify(@r.object)
-      original = JSON.stringify(@tinCanObject.compile())
-      compiled.should.equal original
+      beforeEach ->
+        @statement.as @user, i: @completed, a: @scene, in: @scenario, resulting_in: @score
+        @r = @statement.compile @event
 
-    it 'should set the "context"', ->
-      compiled = JSON.stringify(@r.context)
-      original = JSON.stringify(@context.compile())
-      compiled.should.equal original
+      statement.shouldCompile()
 
-    it 'should set the "result"', ->
-      compiled = JSON.stringify(@r.result)
-      original = JSON.stringify(@result.compile())
-      compiled.should.equal original
+    describe 'with dynamic loading of classes', ->
+
+      beforeEach ->
+        @statement.as 'user', i: 'completed', a: 'scene', in_a: 'scenario', resulting_in_a: 'score'
+        @r = @statement.compile @event
+
+#      statement.shouldCompile()
