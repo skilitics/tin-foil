@@ -48,7 +48,8 @@ describe 'Statement', ->
   describe 'Compiliation', ->
 
     before ->
-      @event = {}
+      @event =
+        timestamp: new Date().toString()
       @user = Agent.extend().named 'Steve'
       @completed = Verb.extend().displayed_as 'en-US': 'completed'
       @scene = TinCanObject.extend().definition_named_as 'scene'
@@ -61,7 +62,7 @@ describe 'Statement', ->
     describe 'with classes passed in', ->
 
       beforeEach ->
-        @statement.as @user, i: @completed, a: @scene, in: @scenario, resulting_in: @score
+        @statement.as @user, i: @completed, a: @scene, in: @scenario, resulting_in: @score, at: @event.timestamp
         @r = @statement.compile @event
 
       statement.shouldCompile()
@@ -70,7 +71,7 @@ describe 'Statement', ->
 
       beforeEach ->
         @statement.loadDefinitionsFrom(new DefinitionLoader(this))
-        @statement.as 'user', i: 'completed', a: 'scene', in_a: 'scenario', resulting_in_a: 'score'
+        @statement.as 'user', i: 'completed', a: 'scene', in_a: 'scenario', resulting_in_a: 'score', at: @event.timestamp
         @r = @statement.compile @event
 
       statement.shouldCompile()

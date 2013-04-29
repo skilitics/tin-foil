@@ -38,6 +38,8 @@ class Statement
     if options.resulting_in_a then @resulting_in_a options.resulting_in_a
     if options.resulting_in then @resulting_in options.resulting_in
 
+    if options.at then @at options.at
+
     this
 
   i: (verb) ->
@@ -60,6 +62,10 @@ class Statement
     @result = result
     this
 
+  at: (timestamp) ->
+    @timestamp = timestamp
+    this
+
   # Compiliation
   compile: (event) ->
     actor: @definitionLoader.findDefinition(@actor).compile event
@@ -67,5 +73,6 @@ class Statement
     object: @definitionLoader.findDefinition(@object).compile event
     context: @definitionLoader.findDefinition(@context).compile event
     result: @definitionLoader.findDefinition(@result).compile event
+    timestamp: @timestamp
 
 module.exports = Statement

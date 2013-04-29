@@ -24,3 +24,6 @@ exports.shouldCompile = ->
     compiled = JSON.stringify(@r.result)
     original = JSON.stringify(@result.compile())
     compiled.should.equal original
+
+  it 'should set the "timestamp"', ->
+    @r.timestamp.should.equal @event.timestamp
