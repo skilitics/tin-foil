@@ -49,6 +49,6 @@ class Context extends Module
     revision: Util.callOrReturn(this, @revision, event)
     platform: Util.callOrReturn(this, @platform, event)
     language: Util.callOrReturn(this, @language, event)
-#    extensions: @compileExtensions(event)
+    extensions: @compileExtensions(event)
 
 module.exports = Context

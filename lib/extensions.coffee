@@ -1,3 +1,5 @@
+Util = require './util'
+
 Extensions =
   extends_with: (key, value) ->
     @extensions ?= {}
@@ -5,7 +7,8 @@ Extensions =
     this
 
   compileExtensions: (event) ->
-    # Loop through the extensions and apply the value or call the fun passing in event
-    this
+    exts = {}
+    exts[key] = Util.callOrReturn(this, value, event) for own key, value of @extensions
+    exts
 
 module.exports = Extensions

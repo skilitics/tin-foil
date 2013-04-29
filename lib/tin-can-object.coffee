@@ -44,6 +44,6 @@ class TinCanObject extends Module
 #      type: @type
       name: Util.callOrReturn(this, @definitionName, event)
       description: Util.callOrReturn(this, @definitionDescription, event)
-#    extensions: @compileExtensions(event)
+    extensions: @compileExtensions(event)
 
 module.exports = TinCanObject
