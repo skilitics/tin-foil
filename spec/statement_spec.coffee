@@ -5,7 +5,7 @@ describe 'Statement', ->
   before ->
     @user = Agent.extend().named 'Steve'
     @verb = Verb.extend().displayed_as 'en-US': 'completed'
-    @tinCanObject = TinCanObject.extend().named 'scene'
+    @tinCanObject = TinCanObject.extend().definition_named_from 'scene'
     @context = Context.extend()
     @result = Result.extend().scored_as '1'
 
@@ -51,7 +51,7 @@ describe 'Statement', ->
       @event = {}
       @user = Agent.extend().named 'Steve'
       @completed = Verb.extend().displayed_as 'en-US': 'completed'
-      @scene = TinCanObject.extend().named 'scene'
+      @scene = TinCanObject.extend().definition_named_as 'scene'
       @scenario = Context.extend()
       @score = Result.extend().scored_as '1'
 

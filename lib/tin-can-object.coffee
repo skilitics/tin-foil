@@ -19,20 +19,19 @@ class TinCanObject extends Module
     @id = fn
     this
 
-  @named: (name) ->
+  @definition_type_from: (fn) -> @definition_type_as fn
+  @definition_type_as: (type) ->
+    @definitionType = type
+    this
+
+  @definition_named_from: (fn) -> @definition_named_as fn
+  @definition_named_as: (name) ->
     @definitionName = name
     this
 
-  @named_from: (fn) ->
-    @definitionName = fn
-    this
-
-  @described_as: (description) ->
+  @definition_described_by: (fn) -> @definition_described_as fn
+  @definition_described_as: (description) ->
     @definitionDescription = description
-    this
-
-  @described_by: (fn) ->
-    @definitionDescription = fn
     this
 
   # Compliation
@@ -41,7 +40,7 @@ class TinCanObject extends Module
     objectType: Util.callOrReturn(this, @objectType, event)
     id: Util.callOrReturn(this, @id, event)
     definition:
-#      type: @type
+      type: Util.callOrReturn(this, @definitionType, event)
       name: Util.callOrReturn(this, @definitionName, event)
       description: Util.callOrReturn(this, @definitionDescription, event)
     extensions: @compileExtensions(event)

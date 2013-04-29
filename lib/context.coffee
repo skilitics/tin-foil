@@ -22,19 +22,28 @@ class Context extends Module
     this
 
   # contextActivities
-  @parented_by: (parent) -> @constructor.parent = parent
-  @grouped_by: (group) -> @constructor.group = group
+  @parented_by: (fn) -> @parented_as fn
+  @parented_as: (parent) ->
+    @constructor.parent = parent
+    this
+
+  @grouped_by: (fn) -> @grouped_as fn
+  @grouped_as: (group) ->
+    @constructor.group = group
+    this
 
   @revisioned_as: (fn) -> @revisioned_by fn
   @revisioned_by: (revision) ->
     @revision = revision
     this
 
-  @platform_from: (platform) ->
+  @platform_from: (fn) -> @platform_as fn
+  @platform_as: (platform) ->
     @platform = platform
     this
 
-  @language_from: (language) ->
+  @language_from: (fn) -> @language_as fn
+  @language_as: (language) ->
     @language = language
     this
 
