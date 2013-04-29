@@ -1,4 +1,4 @@
-{ Statement, Agent, Verb, TinCanObject, Context, Result } = require '../lib'
+{ DefinitionLoader, Statement, Agent, Verb, TinCanObject, Context, Result } = require '../lib'
 statement = require './behaviours/statement'
 
 describe 'Statement', ->
@@ -69,7 +69,8 @@ describe 'Statement', ->
     describe 'with dynamic loading of classes', ->
 
       beforeEach ->
+        @statement.loadDefinitionsFrom(new DefinitionLoader(this))
         @statement.as 'user', i: 'completed', a: 'scene', in_a: 'scenario', resulting_in_a: 'score'
         @r = @statement.compile @event
 
-#      statement.shouldCompile()
+      statement.shouldCompile()

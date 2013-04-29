@@ -1,3 +1,5 @@
+DefinitionLoader = require './definition-loader'
+
 class Statement
 
   # LRS assigns:
@@ -11,6 +13,12 @@ class Statement
     statement = new Statement
     statement.as(actor, options)
     statement
+
+  constructor: ->
+    @definitionLoader = new DefinitionLoader()
+
+  loadDefinitionsFrom: (definitionLoader) ->
+    @definitionLoader = definitionLoader
 
   as: (actor, options) ->
     @actor = actor
@@ -54,10 +62,10 @@ class Statement
 
   # Compiliation
   compile: (event) ->
-    actor: @actor?.compile event
-    verb: @verb?.compile()
-    object: @object?.compile event
-    context: @context?.compile event
-    result: @result?.compile event
+    actor: @definitionLoader.findDefinition(@actor).compile event
+    verb: @definitionLoader.findDefinition(@verb).compile()
+    object: @definitionLoader.findDefinition(@object).compile event
+    context: @definitionLoader.findDefinition(@context).compile event
+    result: @definitionLoader.findDefinition(@result).compile event
 
 module.exports = Statement
