@@ -24,12 +24,12 @@ class Context extends Module
   # contextActivities
   @parented_by: (fn) -> @parented_as fn
   @parented_as: (parent) ->
-    @constructor.parent = parent
+    @parent = parent
     this
 
   @grouped_by: (fn) -> @grouped_as fn
   @grouped_as: (group) ->
-    @constructor.group = group
+    @group = group
     this
 
   @revisioned_as: (fn) -> @revisioned_by fn
@@ -54,7 +54,7 @@ class Context extends Module
     team: Util.callOrReturn(this, @team, event)
     contextActivities:
       parent: id: Util.callOrReturn(this, @parent, event)
-      grouping: id: Util.callOrReturn(this, @grouping, event)
+      grouping: id: Util.callOrReturn(this, @group, event)
     revision: Util.callOrReturn(this, @revision, event)
     platform: Util.callOrReturn(this, @platform, event)
     language: Util.callOrReturn(this, @language, event)

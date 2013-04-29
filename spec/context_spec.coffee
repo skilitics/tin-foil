@@ -1,4 +1,5 @@
 Context = require '../lib/context'
+context = require './behaviours/context'
 
 describe 'Context', ->
   before ->
@@ -8,7 +9,9 @@ describe 'Context', ->
       team: 'Sam'
       revision: '1.3.4.0'
       platform: 'Flash Player' # Platform is a {}
-      language: 'en-US'
+      language: 'en-US',
+      parent: 'some-parent'
+      group: 'some-group'
 
   describe 'Fluent API', ->
     beforeEach -> @CourseContext = Context.extend()
@@ -38,6 +41,27 @@ describe 'Context', ->
       it 'should set "team"', -> @r.team.should.equal @e.team
       it 'should be chainable', -> @r.should.equal @CourseContext
 
+    describe 'contextActivities', ->
+      describe 'parented_by', ->
+        beforeEach -> @r = @CourseContext.parented_by @e.parent
+        it 'should set "parent"', -> @r.parent.should.equal @e.parent
+        it 'should be chainable', -> @r.should.equal @CourseContext
+
+      describe 'parented_as', ->
+        beforeEach -> @r = @CourseContext.parented_as @e.parent
+        it 'should set "parent"', -> @r.parent.should.equal @e.parent
+        it 'should be chainable', -> @r.should.equal @CourseContext
+
+      describe 'grouped_by', ->
+        beforeEach -> @r = @CourseContext.grouped_by @e.parent
+        it 'should set "group"', -> @r.group.should.equal @e.parent
+        it 'should be chainable', -> @r.should.equal @CourseContext
+
+      describe 'grouped_as', ->
+        beforeEach -> @r = @CourseContext.grouped_as @e.parent
+        it 'should set "group"', -> @r.group.should.equal @e.parent
+        it 'should be chainable', -> @r.should.equal @CourseContext
+
     describe 'revisioned_as', ->
       beforeEach -> @r = @CourseContext.revisioned_as @e.revision
       it 'should set "revision"', -> @r.revision.should.equal @e.revision
@@ -65,17 +89,12 @@ describe 'Context', ->
           .revisioned_as(@e.revision)
           .platform_from(@e.platform)
           .language_from(@e.language)
+          .parented_as(@e.parent)
+          .grouped_as(@e.group)
 
         @r = @CourseContext.compile(@e)
 
-      it 'should contain the "registration"', -> @r.registration.should.equal @e.registration
-      it 'should contain the "instructor"', -> @r.instructor.should.equal @e.instructor
-      it 'should contain the "team"', -> @r.team.should.equal @e.team
-      it 'should contain the "contextActivities"...'
-      it 'should contain the "revision"', -> @r.revision.should.equal @e.revision
-      it 'should contain the "platform"', -> @r.platform.should.equal @e.platform
-      it 'should contain the "language"', -> @r.language.should.equal @e.language
-      it 'should contain the "Extensions"...'
+      context.shouldComplie()
 
     describe 'with dynamic values', ->
       before ->
@@ -87,14 +106,9 @@ describe 'Context', ->
           .revisioned_by((event) -> event.revision)
           .platform_from((event) -> event.platform)
           .language_from((event) -> event.language)
+          .parented_by((event) -> event.parent)
+          .grouped_by((event) -> event.group)
 
         @r = @CourseContext.compile(@e)
 
-      it 'should contain the "registration"', -> @r.registration.should.equal @e.registration
-      it 'should contain the "instructor"', -> @r.instructor.should.equal @e.instructor
-      it 'should contain the "team"', -> @r.team.should.equal @e.team
-      it 'should contain the "contextActivities"...'
-      it 'should contain the "revision"', -> @r.revision.should.equal @e.revision
-      it 'should contain the "platform"', -> @r.platform.should.equal @e.platform
-      it 'should contain the "language"', -> @r.language.should.equal @e.language
-      it 'should contain the "Extensions"...'
+      context.shouldComplie()
