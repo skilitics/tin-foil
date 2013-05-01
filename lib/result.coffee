@@ -1,14 +1,11 @@
-Module = require './module'
+TinCanObject = require './tin-can-object'
 Util = require './util'
 
-class Result extends Module
+class Result extends TinCanObject
 
   @scored_from: (fn) -> @scored_as fn
   @scored_as: (score) ->
     @score = score
     this
-
-  @compile: (event) ->
-    score: Util.callOrReturn(this, @score, event)
 
 module.exports = Result

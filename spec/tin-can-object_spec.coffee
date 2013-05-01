@@ -1,87 +1,70 @@
 TinCanObject = require '../lib/tin-can-object'
-tinCanObject = require './behaviours/tin-can-object'
 
-describe 'Tin Can Object', ->
-  before ->
-    @e =
-      id: '/activities/scenario/123/456'
-      objectType: 'Activity'
-      type: 'scenario'
-      name: 'Purposeful Conversations - SM'
-      description: 'As the Store Manager, your role in this scenario is to deal...'
+describe 'TinCanObject', ->
 
-  describe 'Fluent API', ->
-    beforeEach -> @Scenario = TinCanObject.extend()
+  beforeEach ->
+    @base = TinCanObject.extend()
+    @event =
+      id: '1234'
+      objectType: 'a-dynamic-value'
+      name: 'name-property'
 
-    describe 'of_type', ->
-      beforeEach -> @r = @Scenario.of_type @e.type
-      it 'should set "objectType"', -> @r.objectType.should.equal @e.type
-      it 'should be chainable', -> @r.should.equal @Scenario
+  describe 'Setting properties', ->
 
-    describe 'identified_as', ->
-      beforeEach -> @r = @Scenario.identified_as @e.id
-      it 'should set "id"', -> @r.id.should.equal @e.id
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should allow setting static properties', ->
+      @base.set 'objectType', to: 'a-static-value'
+      @base.compile(@event).objectType.should.equal 'a-static-value'
 
-    describe 'identified_by', ->
-      beforeEach -> @r = @Scenario.identified_by @e.id
-      it 'should set "id"', -> @r.id.should.equal @e.id
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should allow setting dynamic properties', ->
+      @base.set 'objectType', to: (event) -> event.objectType
+      @base.compile(@event).objectType.should.equal 'a-dynamic-value'
 
-    describe 'definition_type_from', ->
-      beforeEach -> @r = @Scenario.definition_type_from 'en-US': @e.name
-      it 'should set "definition.name"', -> @r.definitionType['en-US'].should.equal @e.name
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should be chainable', ->
+      @base.set('objectType', to: 'a-static-value').should.equal @base
 
-    describe 'definition_type_as', ->
-      beforeEach -> @r = @Scenario.definition_type_as 'en-US': @e.name
-      it 'should set "definition.name"', -> @r.definitionType['en-US'].should.equal @e.name
-      it 'should be chainable', -> @r.should.equal @Scenario
+  describe 'Adding properties', ->
+    beforeEach ->
+      @base.add 'name', String, 'named', 'name_from'
 
-    describe 'definition_named_from', ->
-      beforeEach -> @r = @Scenario.definition_named_from 'en-US': @e.name
-      it 'should set "definition.name"', -> @r.definitionName['en-US'].should.equal @e.name
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should allow setting added properties to static values', ->
+      @base.named 'name-property'
+      @base.compile(@event).name.should.equal 'name-property'
 
-    describe 'definition_named_as', ->
-      beforeEach -> @r = @Scenario.definition_named_as 'en-US': @e.name
-      it 'should set "definition.name"', -> @r.definitionName['en-US'].should.equal @e.name
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should allow setting added properties to dynamic values', ->
+      @base.name_from (event) -> event.name
+      @base.compile(@event).name.should.equal 'name-property'
 
-    describe 'definition_described_by', ->
-      beforeEach -> @r = @Scenario.definition_described_by 'en-US': @e.description
-      it 'should set "definition.description"', -> @r.definitionDescription['en-US'].should.equal @e.description
-      it 'should be chainable', -> @r.should.equal @Scenario
+    it 'should be chainable', ->
+      @base.add('name', String, 'named', 'name_from').should.equal @base
 
-    describe 'definition_described_as', ->
-      beforeEach -> @r = @Scenario.definition_described_as 'en-US': @e.description
-      it 'should set "definition.description"', -> @r.definitionDescription['en-US'].should.equal @e.description
-      it 'should be chainable', -> @r.should.equal @Scenario
+  describe 'Extensions', ->
+    beforeEach ->
+      @extension = TinCanObject.extend()
 
-  describe 'Compiliation', ->
+    describe 'Setting extended properties', ->
 
-    describe 'with static values', ->
-      before ->
-        @Scenario = TinCanObject.extend()
-        @Scenario
-          .identified_as(@e.id)
-          .of_type(@e.type)
-          .definition_named_as('en-US': @e.name)
-          .definition_described_as('en-US': @e.description)
+      it 'should allow setting extended static properties', ->
+        @extension.set 'objectType', to: 'extended-type'
+        @base.add 'extension', @extension
+        @base.compile(@event).extension.objectType.should.equal 'extended-type'
 
-        @r = @Scenario.compile(@e)
+      it 'should allow setting extended dynamic properties', ->
+        @extension.set 'objectType', to: (event) -> event.objectType
+        @base.add 'extension', @extension
+        @base.compile(@event).extension.objectType.should.equal 'a-dynamic-value'
 
-      tinCanObject.shouldCompile()
+    describe 'Adding extended properties', ->
+      beforeEach ->
+        @extension.add 'name', String, 'named', 'name_from'
+        @base.add 'extension', @extension
 
-    describe 'with dynamic values', ->
-      before ->
-        @Scenario = TinCanObject.extend()
-        @Scenario
-          .identified_by((event) -> event.id)
-          .of_type((event) -> event.type)
-          .definition_named_as((event) -> 'en-US': event.name)
-          .definition_described_by((event) -> 'en-US': event.description)
+      it 'should allow setting added extended properties to static values', ->
+        @base.extension_named 'extended-name-property'
+        @base.compile(@event).extension.name.should.equal 'extended-name-property'
 
-        @r = @Scenario.compile(@e)
+      it 'should allow setting added extended properties to dynamic values', ->
+        @base.extension_name_from (event) -> event.name
+        @base.compile(@event).extension.name.should.equal @event.name
 
-      tinCanObject.shouldCompile()
+      it 'should be chainable', ->
+        @base.extension_named('extended-name-property').should.equal @base

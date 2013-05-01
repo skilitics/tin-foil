@@ -1,14 +1,9 @@
-Util = require './util'
+TinCanObject = require './tin-can-object'
+LanguageMap = require './language-map'
 
-Extensions =
-  extends_with: (key, value) ->
-    @extensions ?= {}
-    @extensions[key] = value
-    this
+class Extensions extends TinCanObject
 
-  compileExtensions: (event) ->
-    exts = {}
-    exts[key] = Util.callOrReturn(this, value, event) for own key, value of @extensions
-    exts
+  @add 'name', LanguageMap
+  @add 'description', LanguageMap
 
 module.exports = Extensions

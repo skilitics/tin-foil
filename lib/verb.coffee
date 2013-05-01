@@ -1,17 +1,10 @@
-Module = require './module'
+TinCanObject = require './tin-can-object'
+URI = String
+LanguageMap = Object
 
-class Verb extends Module
+class Verb extends TinCanObject
 
-  @identified_as: (id) ->
-    @id = id
-    this
-
-  @displayed_as: (display) ->
-    @display = display
-    this
-
-  @compile: ->
-    id: @id
-    display: @display
+  @add 'id', URI, 'identified_as', 'id_from'
+  @add 'display', LanguageMap, 'displayed_as', 'display_from'
 
 module.exports = Verb

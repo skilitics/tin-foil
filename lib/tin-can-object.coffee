@@ -1,48 +1,79 @@
-Module = require './module'
-Extensions = require './extensions'
-Util = require './util'
+# This is taken from Spine. It is what makes it possible (or at least simpler) to extend or instantiate objects in
+# JavaScript, vs CoffeeScript.
 
-class TinCanObject extends Module
+moduleKeywords = ['mixin', 'extend']
 
-  @mixin Extensions
+class TinCanObject
 
-  # Fluent API
-  @of_type: (type) ->
-    @objectType = type
+  @mixin: (obj, prefix) ->
+    throw new Error('mixin(obj) requires obj') unless obj
+    for own key, value of obj when key not in moduleKeywords
+      if prefix
+        @["#{prefix}_#{key}"] = value
+      else
+        @[key] = value
     this
 
-  @identified_as: (identifier) ->
-    @id = identifier
+  @set: (name, options) ->
+    @props ?= {}
+    @props[name] =
+      type: null
+      value: options.to
+      aliases: []
+
     this
 
-  @identified_by: (fn) ->
-    @id = fn
+  @add: (propertyName, type, aliases...) ->
+    @props ?= {}
+    @props[propertyName] =
+      type: type
+      value: null
+      aliases: aliases
+
+    if type?.prototype instanceof TinCanObject
+      @_mapExtensionAliases propertyName, type
+    else
+      @_addPropertyMethodAlias propertyName, type, alias, @props for alias in aliases
+
     this
 
-  @definition_type_from: (fn) -> @definition_type_as fn
-  @definition_type_as: (type) ->
-    @definitionType = type
+  @_addPropertyMethodAlias: (propertyName, type, alias, propertyStore) ->
+    @[alias] = (val) =>
+      propertyStore[propertyName] =
+        type: type
+        value: val
+        aliases: []
+      this
+
     this
 
-  @definition_named_from: (fn) -> @definition_named_as fn
-  @definition_named_as: (name) ->
-    @definitionName = name
+  @_mapExtensionAliases: (propertyName, extensionType) ->
+    for own name, property of extensionType.props
+      for alias in property.aliases
+        @_addPropertyMethodAlias name, extensionType, "#{propertyName}_#{alias}", extensionType.props
+
     this
 
-  @definition_described_by: (fn) -> @definition_described_as fn
-  @definition_described_as: (description) ->
-    @definitionDescription = description
-    this
-
-  # Compliation
+  @extend: (statics) ->
+    class Result extends this
+    Result.mixin(statics) if statics
+    Result
 
   @compile: (event) ->
-    objectType: Util.callOrReturn(this, @objectType, event)
-    id: Util.callOrReturn(this, @id, event)
-    definition:
-      type: Util.callOrReturn(this, @definitionType, event)
-      name: Util.callOrReturn(this, @definitionName, event)
-      description: Util.callOrReturn(this, @definitionDescription, event)
-    extensions: @compileExtensions(event)
+    object = {}
+
+    for own name, property of @props
+      if property.value
+        if property.value instanceof Function
+          val = property.value.call(this, event)
+        else
+          val = property.value
+      else if property.type?.prototype instanceof TinCanObject
+        val = property.type.compile(event)
+
+      object[name] = val
+
+    object
+
 
 module.exports = TinCanObject

@@ -1,63 +1,21 @@
-Module = require './module'
+TinCanObject = require './tin-can-object'
+Agent = require './agent'
 Extensions = require './extensions'
-Util = require './util'
 
-class Context extends Module
+UUID = String
+Group = {}
+ContextActivities = {}
 
-  @mixin Extensions
+class Context extends TinCanObject
 
-  # Fluent API
-  @registered_by: (fn) -> @registered_as fn
-  @registered_as: (registration) ->
-    @registration = registration
-    this
-
-  @instructed_by: (fn) -> @instructed_as fn
-  @instructed_as: (instructor) ->
-    @instructor = instructor
-    this
-
-  @teamed_with: (team) ->
-    @team = team
-    this
-
-  # contextActivities
-  @parented_by: (fn) -> @parented_as fn
-  @parented_as: (parent) ->
-    @parent = parent
-    this
-
-  @grouped_by: (fn) -> @grouped_as fn
-  @grouped_as: (group) ->
-    @group = group
-    this
-
-  @revisioned_as: (fn) -> @revisioned_by fn
-  @revisioned_by: (revision) ->
-    @revision = revision
-    this
-
-  @platform_from: (fn) -> @platform_as fn
-  @platform_as: (platform) ->
-    @platform = platform
-    this
-
-  @language_from: (fn) -> @language_as fn
-  @language_as: (language) ->
-    @language = language
-    this
-
-  # Compliation
-  @compile: (event) ->
-    registration: Util.callOrReturn(this, @registration, event)
-    instructor: Util.callOrReturn(this, @instructor, event)
-    team: Util.callOrReturn(this, @team, event)
-    contextActivities:
-      parent: id: Util.callOrReturn(this, @parent, event)
-      grouping: id: Util.callOrReturn(this, @group, event)
-    revision: Util.callOrReturn(this, @revision, event)
-    platform: Util.callOrReturn(this, @platform, event)
-    language: Util.callOrReturn(this, @language, event)
-    extensions: @compileExtensions(event)
+  @add 'registration', UUID, 'registered_as', 'registration_from'
+  @add 'instructor', Agent
+  @add 'team', Group, 'teamed_as', 'team_from'
+  @add 'contextActivities', ContextActivities
+  @add 'revision', String, 'revisioned_as', 'revision_from'
+  @add 'platform', String, 'platform_as', 'platform_from'
+  @add 'language', String, 'language_as', 'language_from'
+#  @add 'statement', String
+  @add 'extensions', Extensions
 
 module.exports = Context
