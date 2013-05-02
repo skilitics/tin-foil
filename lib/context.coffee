@@ -8,7 +8,7 @@ ContextActivities = {}
 
 class Context extends TinFoilObject
 
-  @add 'registration', UUID, 'registered_as', 'registration_from'
+  @prop 'registration', as: UUID, aliases: ['registered_as', 'registration_from']
   @add 'instructor', Agent
   @add 'team', Group, 'teamed_as', 'team_from'
   @add 'contextActivities', ContextActivities

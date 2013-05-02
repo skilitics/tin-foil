@@ -8,10 +8,10 @@ URL = String
 
 class ActivityDefinition extends TinFoilObject
 
-  @add 'name', LanguageMap, 'named', 'name_from'
-  @add 'description', LanguageMap, 'described_as', 'description_from'
-  @add 'type', URI, 'typed_as', 'type_from'
-  @add 'moreinfo', URL, 'more_info_as', 'more_info_from'
+  @prop 'name', as: LanguageMap, aliases: ['named', 'name_from']
+  @prop 'description', as: LanguageMap, aliases: ['described_as', 'description_from']
+  @prop 'type', as: URI, aliases: ['typed_as', 'type_from']
+  @prop 'moreinfo', as: URL, aliases: ['more_info_as', 'more_info_from']
   @mixin InteractionActivities
   @add 'extension', Extensions
 

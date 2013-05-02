@@ -3,9 +3,10 @@ InverseFunctionalIdentifer = require './inverse-functional-identifer'
 
 class Agent extends TinFoilObject
 
-  @set 'objectType', to: 'Agent'
+  @set 'objectType', 'Agent'
 
-  @add 'name', String, 'named', 'name_from'
-  @add InverseFunctionalIdentifer
+  @prop 'name', as: String, aliases: ['named', 'name_from']
+
+  @mixin InverseFunctionalIdentifer
 
 module.exports = Agent

@@ -1,36 +1,20 @@
 Activity = require '../lib/activity'
-ActivityDefinition = require '../lib/activity-definition'
+#ActivityDefinition = require '../lib/activity-definition'
+props = require './behaviours/props'
 
 should = require('chai').should()
 
 describe 'Activity', ->
 
-  beforeEach ->
-    @scene = Activity.extend()
-
-    @event =
-      id: '1234-5678'
-      scene:
-        title: 'A scene'
+  beforeEach -> @scene = Activity.extend()
 
   describe 'objectType', ->
     it 'should be set to "Activity"', ->
-      @scene.compile(@event).objectType.should.equal 'Activity'
+      @scene.should.have.prop 'objectType', 'Activity'
 
   describe 'id', ->
+    props.shouldHaveProp 'scene', 'id'
+    props.shouldHaveAlias 'scene', 'id', 'identified_as'
+    props.shouldHaveAlias 'scene', 'id', 'identify_from'
+
     it 'should validate as a URI'
-
-    it 'should set from "identified_as"', ->
-      @scene
-        .identified_as('1234-5678')
-        .compile(@event).id.should.equal '1234-5678'
-
-    it 'should set from "identify_from"', ->
-      @scene
-        .identify_from((event) -> event.id)
-        .compile(@event).id.should.equal '1234-5678'
-
-  describe 'definition', ->
-    it 'should validate as an "ActivityDefinition"'
-    it 'should be an "ActivityDefinition"'
-#      @scene.properties['definition'].type.should.be.an.instanceOf ActivityDefinition

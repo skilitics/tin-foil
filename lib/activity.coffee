@@ -5,9 +5,9 @@ URI = String
 
 class Activity extends TinFoilObject
 
-  @set 'objectType', to: 'Activity'
+  @set 'objectType', 'Activity'
 
-  @add 'id', URI, 'identified_as', 'identify_from'
-  @add 'definition', ActivityDefinition
+  @prop 'id', as: URI, aliases: ['identified_as', 'identify_from']
+  @prop 'definition', extend: ActivityDefinition
 
 module.exports = Activity

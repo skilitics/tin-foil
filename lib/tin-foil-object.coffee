@@ -1,6 +1,3 @@
-# This is taken from Spine. It is what makes it possible (or at least simpler) to extend or instantiate objects in
-# JavaScript, vs CoffeeScript.
-
 moduleKeywords = ['mixin', 'extend']
 
 class TinFoilObject
@@ -8,24 +5,36 @@ class TinFoilObject
   @mixin: (obj, prefix) ->
     throw new Error('mixin(obj) requires obj') unless obj
     for own key, value of obj when key not in moduleKeywords
-      if prefix
-        @["#{prefix}_#{key}"] = value
-      else
-        @[key] = value
+      @["#{prefix}#{key}"] = value
+
     this
 
-  @set: (name, options) ->
+  @set: (name, value, aliases = []) ->
     @props ?= {}
-    @props[name] =
-      type: null
-      value: options.to
-      aliases: []
 
+    prop = @props[name] or {}
+    prop.value = value
+    prop.aliases = aliases
+    delete prop.type if prop.type
+
+    @props[name] = prop
     this
 
-  @add: (propertyName, type, aliases...) ->
+  @get: (name) ->
+    throw Error "Property [#{name}] has not been defined" unless @hasProp name
+    @props[name]
+
+  @prop: (name, options) ->
+    return @get name unless options
+    @add name, options.as, options.aliases
+    this
+
+  @hasProp: (name) -> !!@props and !!@props[name]
+
+  @add: (propertyName, type, aliases = []) ->
     @props ?= {}
     @props[propertyName] =
+      name: propertyName
       type: type
       value: null
       aliases: aliases
@@ -40,6 +49,7 @@ class TinFoilObject
   @_addPropertyMethodAlias: (propertyName, type, alias, propertyStore) ->
     @[alias] = (val) =>
       propertyStore[propertyName] =
+        name: propertyName
         type: type
         value: val
         aliases: []

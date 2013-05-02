@@ -1,20 +1,38 @@
 ActivityDefinition = require '../lib/activity-definition'
+props = require './behaviours/props'
 
 describe 'Activity Definition', ->
 
-  beforeEach ->
-    @definition = ActivityDefinition.extend()
-    @event =
-      id: '1234-5678'
+  before -> @definition = ActivityDefinition.extend()
 
-    describe 'name', ->
-      it 'should have alias "named"', -> @definition.should.respondTo 'named'
-      it 'should have alias "name_from"', -> @definition.should.respondTo 'name_from'
+  describe 'name', ->
+    props.shouldHaveProp 'definition', 'name'
+    props.shouldHaveAlias 'definition', 'name', 'named'
+    props.shouldHaveAlias 'definition', 'name', 'name_from'
 
-    describe 'description', ->
-      it 'should have alias "described_as"', -> @definition.should.respondTo 'described_as'
-      it 'should have alias "description_from"', -> @definition.should.respondTo 'description_from'
+    it 'should validate as a LanguageMap'
 
-    describe 'type', ->
-      it 'should have alias "typed_as"', -> @definition.should.respondTo 'typed_as'
-      it 'should have alias "type_from"', -> @definition.should.respondTo 'type_from'
+  describe 'description', ->
+    props.shouldHaveProp 'definition', 'description'
+    props.shouldHaveAlias 'definition', 'description', 'described_as'
+    props.shouldHaveAlias 'definition', 'description', 'description_from'
+
+    it 'should validate as a LanguageMap'
+
+  describe 'type', ->
+    props.shouldHaveProp 'definition', 'type'
+    props.shouldHaveAlias 'definition', 'type', 'typed_as'
+    props.shouldHaveAlias 'definition', 'type', 'type_from'
+
+    it 'should validate as a URI'
+
+  describe 'moreinfo', ->
+    props.shouldHaveProp 'definition', 'moreinfo'
+    props.shouldHaveAlias 'definition', 'moreinfo', 'more_info_as'
+    props.shouldHaveAlias 'definition', 'moreinfo', 'more_info_from'
+
+    it 'should validate as a URL'
+
+  it 'should have interaction properties'
+  it 'should have extensions'
+
