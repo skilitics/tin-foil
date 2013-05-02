@@ -3,7 +3,7 @@
 
 moduleKeywords = ['mixin', 'extend']
 
-class TinCanObject
+class TinFoilObject
 
   @mixin: (obj, prefix) ->
     throw new Error('mixin(obj) requires obj') unless obj
@@ -30,7 +30,7 @@ class TinCanObject
       value: null
       aliases: aliases
 
-    if type?.prototype instanceof TinCanObject
+    if type?.prototype instanceof TinFoilObject
       @_mapExtensionAliases propertyName, type
     else
       @_addPropertyMethodAlias propertyName, type, alias, @props for alias in aliases
@@ -68,7 +68,7 @@ class TinCanObject
           val = property.value.call(this, event)
         else
           val = property.value
-      else if property.type?.prototype instanceof TinCanObject
+      else if property.type?.prototype instanceof TinFoilObject
         val = property.type.compile(event)
 
       object[name] = val
@@ -76,4 +76,4 @@ class TinCanObject
     object
 
 
-module.exports = TinCanObject
+module.exports = TinFoilObject

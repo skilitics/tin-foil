@@ -1,4 +1,4 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 Agent = require './agent'
 Extensions = require './extensions'
 
@@ -6,7 +6,7 @@ UUID = String
 Group = {}
 ContextActivities = {}
 
-class Context extends TinCanObject
+class Context extends TinFoilObject
 
   @add 'registration', UUID, 'registered_as', 'registration_from'
   @add 'instructor', Agent

@@ -1,7 +1,7 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 Util = require './util'
 
-class Result extends TinCanObject
+class Result extends TinFoilObject
 
   @scored_from: (fn) -> @scored_as fn
   @scored_as: (score) ->

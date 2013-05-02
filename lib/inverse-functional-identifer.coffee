@@ -1,7 +1,7 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 AccountObject = require './account-object'
 
-class InverseFunctionalIdentifer extends TinCanObject
+class InverseFunctionalIdentifer extends TinFoilObject
 
   @add 'mbox', String, 'mbox_as', 'mbox_from'
   @add 'account', AccountObject

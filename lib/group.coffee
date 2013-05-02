@@ -1,6 +1,6 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 
-class Group extends TinCanObject
+class Group extends TinFoilObject
 
   @set 'type', to: 'Group'
 

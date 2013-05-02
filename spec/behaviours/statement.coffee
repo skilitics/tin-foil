@@ -10,9 +10,9 @@ exports.shouldCompile = ->
     compiled.should.equal original
 
   it 'should set the "object"', ->
-    JSON.stringify(@r.object).should.equal JSON.stringify(@tinCanObject.compile @event)
+    JSON.stringify(@r.object).should.equal JSON.stringify(@TinFoilObject.compile @event)
     compiled = JSON.stringify(@r.object)
-    original = JSON.stringify(@tinCanObject.compile())
+    original = JSON.stringify(@TinFoilObject.compile())
     compiled.should.equal original
 
   it 'should set the "context"', ->

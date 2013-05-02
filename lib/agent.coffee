@@ -1,7 +1,7 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 InverseFunctionalIdentifer = require './inverse-functional-identifer'
 
-class Agent extends TinCanObject
+class Agent extends TinFoilObject
 
   @set 'objectType', to: 'Agent'
 

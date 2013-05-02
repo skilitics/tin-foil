@@ -1,9 +1,9 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 ActivityDefinition = require './activity-definition'
 
 URI = String
 
-class Activity extends TinCanObject
+class Activity extends TinFoilObject
 
   @set 'objectType', to: 'Activity'
 

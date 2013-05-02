@@ -1,10 +1,10 @@
 Extensions = require '../lib/extensions'
-TinCanObject = require '../lib/tin-can-object'
+TinFoilObject = require '../lib/tin-foil-object'
 
 describe 'Extensions', ->
 
   beforeEach ->
-    class @MyClass extends TinCanObject
+    class @MyClass extends TinFoilObject
       @mixin Extensions
 
       @extends_with 'myExtension', 'myValue'

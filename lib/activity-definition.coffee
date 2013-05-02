@@ -1,4 +1,4 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 #LanguageMap = require './language-map'
 LanguageMap = Object
 InteractionActivities = require './interaction-activities'
@@ -6,7 +6,7 @@ Extensions = require './extensions'
 URI = String
 URL = String
 
-class ActivityDefinition extends TinCanObject
+class ActivityDefinition extends TinFoilObject
 
   @add 'name', LanguageMap, 'named', 'name_from'
   @add 'description', LanguageMap, 'described_as', 'description_from'

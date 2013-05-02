@@ -1,6 +1,6 @@
-TinCanObject = require './tin-can-object'
+TinFoilObject = require './tin-foil-object'
 
-class InteractionActivities extends TinCanObject
+class InteractionActivities extends TinFoilObject
 
   @add 'interactionType', String
   @add 'correctResponsePattern', Array

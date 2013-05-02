@@ -1,9 +1,9 @@
-TinCanObject = require '../lib/tin-can-object'
+TinFoilObject = require '../lib/tin-foil-object'
 
-describe 'TinCanObject', ->
+describe 'TinFoilObject', ->
 
   beforeEach ->
-    @base = TinCanObject.extend()
+    @base = TinFoilObject.extend()
     @event =
       id: '1234'
       objectType: 'a-dynamic-value'
@@ -39,7 +39,7 @@ describe 'TinCanObject', ->
 
   describe 'Extensions', ->
     beforeEach ->
-      @extension = TinCanObject.extend()
+      @extension = TinFoilObject.extend()
 
     describe 'Setting extended properties', ->
 
