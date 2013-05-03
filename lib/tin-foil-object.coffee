@@ -1,3 +1,6 @@
+TinFoilCollection = require './tin-foil-collection'
+TinFoilMap = require './tin-foil-map'
+
 moduleKeywords = ['mixin', 'extend']
 
 class TinFoilObject
@@ -33,7 +36,7 @@ class TinFoilObject
 
   @add: (propertyName, type, aliases = []) ->
     @props ?= {}
-    @props[propertyName] =
+    prop = @props[propertyName] =
       name: propertyName
       type: type
       value: null
@@ -41,6 +44,12 @@ class TinFoilObject
 
     if type?.prototype instanceof TinFoilObject
       @_mapNestedAliases propertyName, type
+    else if type == TinFoilCollection
+      prop.value = new type()
+      @_mapCollectionAliases prop
+    else if type == TinFoilMap
+      prop.value = new TinFoilMap
+      @_mapMapAliases prop
     else
       @_addPropertyAlias propertyName, type, alias, @props for alias in aliases
 
@@ -64,6 +73,22 @@ class TinFoilObject
 
     this
 
+  @_mapCollectionAliases: (property) ->
+    for alias in property.aliases
+      @[alias] = (val) =>
+        property.value.add val
+        this
+
+    this
+
+  @_mapMapAliases: (property) ->
+    for alias in property.aliases
+      @[alias] = (key, value) =>
+        property.value.add key, value
+        this
+
+    this
+
   @extend: (statics) ->
     class Result extends this
     Result.mixin(statics) if statics
@@ -73,17 +98,20 @@ class TinFoilObject
     object = {}
 
     for own name, property of @props
-      if property.value
+      if property.type == TinFoilCollection or property.type == TinFoilMap
+        val = property.value.compile(event)
+
+      else if property.value
         if property.value instanceof Function
           val = property.value.call(this, event)
         else
           val = property.value
+
       else if property.type?.prototype instanceof TinFoilObject
         val = property.type.compile(event)
 
       object[name] = val
 
     object
-
 
 module.exports = TinFoilObject

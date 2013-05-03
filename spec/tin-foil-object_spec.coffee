@@ -1,4 +1,6 @@
 TinFoilObject = require '../lib/tin-foil-object'
+TinFoilCollection = require '../lib/tin-foil-collection'
+TinFoilMap = require '../lib/tin-foil-map'
 
 should = require('chai').should()
 expect = require('chai').expect
@@ -101,3 +103,43 @@ describe 'TinFoilObject', ->
     it 'should be able to set dynamic values on nested properties', ->
       @base.nest_set_nested_alias -> 'a-dynamic-value'
       @base.compile().nest.nested_property.should.equal 'a-dynamic-value'
+
+  describe 'Collections', ->
+
+    beforeEach ->
+      @base.prop 'collection', as: TinFoilCollection, aliases: ['add_to_my_collection']
+
+    it 'should map the collection aliases', ->
+      expect(@base.add_to_my_collection).to.not.be.undefined
+
+    it 'should allow adding static properties to the collection', ->
+      @base.add_to_my_collection 'some-value'
+      @base.add_to_my_collection 'another-value'
+      @base.compile().collection[0].should.equal 'some-value'
+      @base.compile().collection[1].should.equal 'another-value'
+
+    it 'should allow adding dynamic properties to the collection', ->
+      @base.add_to_my_collection -> 'some-value'
+      @base.add_to_my_collection -> 'another-value'
+      @base.compile().collection[0].should.equal 'some-value'
+      @base.compile().collection[1].should.equal 'another-value'
+
+  describe 'Maps', ->
+
+    beforeEach ->
+      @base.prop 'my_map', as: TinFoilMap, aliases: ['add_to_my_map']
+
+    it 'should map the map aliases', ->
+      expect(@base.add_to_my_map).to.not.be.undefined
+
+    it 'should allow adding static properties to the map', ->
+      @base.add_to_my_map 'some-key', 'some-value'
+      @base.add_to_my_map 'another-key', 'another-value'
+      @base.compile().my_map['some-key'].should.equal 'some-value'
+      @base.compile().my_map['another-key'].should.equal 'another-value'
+
+    it 'should allow adding dynamic properties to the map', ->
+      @base.add_to_my_map 'some-key', -> 'some-value'
+      @base.add_to_my_map 'another-key', -> 'another-value'
+      @base.compile().my_map['some-key'].should.equal 'some-value'
+      @base.compile().my_map['another-key'].should.equal 'another-value'

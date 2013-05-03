@@ -3,7 +3,10 @@ props = require './behaviours/props'
 
 describe 'Context', ->
 
-  before -> @context = Context.extend()
+  before ->
+    @context = Context.extend()
+#    @context.with_extension 'skilitix.com/organization', '1234-5678'
+#    @context.with_extension 'skilitix.com/tenantId', (event) -> event.tenantId
 
   describe 'registration', ->
     props.shouldHaveProp 'context', 'registration'

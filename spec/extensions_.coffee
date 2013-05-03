@@ -1,9 +1,11 @@
 Extensions = require '../lib/extensions'
-TinFoilObject = require '../lib/tin-foil-object'
+props = require './behaviours/props'
 
 describe 'Extensions', ->
 
   beforeEach ->
+
+
     class @MyClass extends TinFoilObject
       @mixin Extensions
 

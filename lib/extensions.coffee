@@ -1,9 +1,7 @@
-TinFoilObject = require './tin-foil-object'
-LanguageMap = require './language-map'
+TinFoilCollection = require './tin-foil-collection'
 
-class Extensions extends TinFoilObject
+class Extension extends TinFoilCollection
 
-  @add 'name', LanguageMap
-  @add 'description', LanguageMap
 
-module.exports = Extensions
+
+module.exports = Extension
