@@ -13,7 +13,7 @@ class TinFoilObject
     @props ?= {}
 
     prop = @props[name] or {}
-    prop.value = value
+    prop.value = value.to || value
     prop.aliases = aliases
     delete prop.type if prop.type
 
@@ -40,13 +40,13 @@ class TinFoilObject
       aliases: aliases
 
     if type?.prototype instanceof TinFoilObject
-      @_mapExtensionAliases propertyName, type
+      @_mapNestedAliases propertyName, type
     else
-      @_addPropertyMethodAlias propertyName, type, alias, @props for alias in aliases
+      @_addPropertyAlias propertyName, type, alias, @props for alias in aliases
 
     this
 
-  @_addPropertyMethodAlias: (propertyName, type, alias, propertyStore) ->
+  @_addPropertyAlias: (propertyName, type, alias, propertyStore) ->
     @[alias] = (val) =>
       propertyStore[propertyName] =
         name: propertyName
@@ -57,10 +57,10 @@ class TinFoilObject
 
     this
 
-  @_mapExtensionAliases: (propertyName, extensionType) ->
+  @_mapNestedAliases: (propertyName, extensionType) ->
     for own name, property of extensionType.props
       for alias in property.aliases
-        @_addPropertyMethodAlias name, extensionType, "#{propertyName}_#{alias}", extensionType.props
+        @_addPropertyAlias name, extensionType, "#{propertyName}_#{alias}", extensionType.props
 
     this
 
