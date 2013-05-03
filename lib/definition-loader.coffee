@@ -13,4 +13,6 @@ class DefinitionLoader
     # If a load context was set, find our definitions in there
     if @context then return @context[type]
 
+    throw Error 'Nowhere to load definition from'
+
 module.exports = DefinitionLoader

@@ -2,15 +2,15 @@
 statement = require './behaviours/statement'
 
 describe 'Statement', ->
-  before ->
-    @user = Agent.extend().named 'Steve'
-    @verb = Verb.extend().displayed_as 'en-US': 'completed'
-#    @activity = Activity.extend().definition_named 'scene'
-    @activity = Activity.extend().identified_as 'scene'
-    @context = Context.extend()
-    @result = Result.extend().scored_as '1'
 
   describe 'Fluent API', ->
+    before ->
+      @user = Agent.extend()
+      @verb = Verb.extend()
+      @activity = Activity.extend()
+      @context = Context.extend()
+      @result = Result.extend()
+
     beforeEach -> @statement = new Statement
 
     describe 'as', ->
@@ -51,12 +51,12 @@ describe 'Statement', ->
     before ->
       @event =
         timestamp: new Date().toString()
-      @user = Agent.extend().named 'Steve'
-      @completed = Verb.extend().displayed_as 'en-US': 'completed'
-#      @scene = Activity.extend().definition_named 'scene'
-      @scene = Activity.extend().identified_as 'scene'
-      @scenario = Context.extend()
-      @score = Result.extend().scored_as '1'
+
+      @user = Agent.extend()
+      @completed = Verb.extend()
+      @scene = Activity.extend()
+      @scenario = Context
+      @score = Result.extend()
 
     beforeEach ->
       @statement = new Statement
@@ -65,15 +65,15 @@ describe 'Statement', ->
 
       beforeEach ->
         @statement.as @user, i: @completed, a: @scene, in: @scenario, resulting_in: @score, at: @event.timestamp
-#        @r = @statement.compile @event
+        @r = @statement.compile @event
 
-#      statement.shouldCompile()
+      statement.shouldCompile()
 
     describe 'with dynamic loading of classes', ->
 
       beforeEach ->
         @statement.loadDefinitionsFrom(new DefinitionLoader(this))
         @statement.as 'user', i: 'completed', a: 'scene', in_a: 'scenario', resulting_in_a: 'score', at: @event.timestamp
-#        @r = @statement.compile @event
+        @r = @statement.compile @event
 
-#      statement.shouldCompile()
+      statement.shouldCompile()

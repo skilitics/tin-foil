@@ -9,13 +9,13 @@ ContextActivities = {}
 class Context extends TinFoilObject
 
   @prop 'registration', as: UUID, aliases: ['registered_as', 'registration_from']
-  @add 'instructor', Agent
-  @add 'team', Group, 'teamed_as', 'team_from'
-  @add 'contextActivities', ContextActivities
-  @add 'revision', String, 'revisioned_as', 'revision_from'
-  @add 'platform', String, 'platform_as', 'platform_from'
-  @add 'language', String, 'language_as', 'language_from'
-#  @add 'statement', String
-  @add 'extensions', Extensions
+  @prop 'instructor', Agent
+  @prop 'team', Group, 'teamed_as', 'team_from'
+  @prop 'contextActivities', ContextActivities
+  @prop 'revision', as: String, aliases: ['revisioned_as', 'revision_from']
+  @prop 'platform', as: String, aliases: ['platform_as', 'platform_from']
+  @prop 'language', String, 'language_as', 'language_from'
+#  @prop 'statement', Array
+  @prop 'extensions', Extensions
 
 module.exports = Context

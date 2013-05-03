@@ -10,14 +10,14 @@ exports.shouldCompile = ->
     compiled.should.equal original
 
   it 'should set the "object"', ->
-    JSON.stringify(@r.object).should.equal JSON.stringify(@TinFoilObject.compile @event)
+    JSON.stringify(@r.object).should.equal JSON.stringify(@scene.compile @event)
     compiled = JSON.stringify(@r.object)
-    original = JSON.stringify(@TinFoilObject.compile())
+    original = JSON.stringify(@scene.compile())
     compiled.should.equal original
 
   it 'should set the "context"', ->
     compiled = JSON.stringify(@r.context)
-    original = JSON.stringify(@context.compile())
+    original = JSON.stringify(@scenario.compile())
     compiled.should.equal original
 
   it 'should set the "result"', ->

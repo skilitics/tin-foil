@@ -1,13 +1,12 @@
 require '../assertions'
 { should } = require 'chai'
 
+a = (word) -> if (word[0] in ['a', 'e', 'i', 'o', 'u']) then 'an' else 'a'
+
 exports.shouldHaveProp = (obj, prop) ->
-  it "should have a '#{prop}' property", ->
+  it "should have #{a(prop)} '#{prop}' property", ->
     @[obj].should.have.prop prop
 
 exports.shouldHaveAlias = (obj, prop, alias) ->
-  vowels = ['a', 'e', 'i', 'o', 'u']
-  a = if (alias[0] in vowels) then 'an' else 'a'
-
-  it "should have #{a} '#{alias}' alias", ->
+  it "should have #{a(alias)} '#{alias}' alias", ->
     @[obj].prop(prop).should.have.alias alias
