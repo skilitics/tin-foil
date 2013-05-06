@@ -1,15 +1,16 @@
-{ DefinitionLoader, Statement, Agent, Verb, TinCanObject, Context, Result } = require '../lib'
+{ DefinitionLoader, Statement, Agent, Activity, Verb, Context, Result } = require '../lib'
 statement = require './behaviours/statement'
 
 describe 'Statement', ->
-  before ->
-    @user = Agent.extend().named 'Steve'
-    @verb = Verb.extend().displayed_as 'en-US': 'completed'
-    @tinCanObject = TinCanObject.extend().definition_named_from 'scene'
-    @context = Context.extend()
-    @result = Result.extend().scored_as '1'
 
   describe 'Fluent API', ->
+    before ->
+      @user = Agent.extend()
+      @verb = Verb.extend()
+      @activity = Activity.extend()
+      @context = Context.extend()
+      @result = Result.extend()
+
     beforeEach -> @statement = new Statement
 
     describe 'as', ->
@@ -18,10 +19,10 @@ describe 'Statement', ->
       it 'should be chainable', -> @r.should.equal @statement
 
       describe 'with "options"', ->
-        beforeEach -> @r = @statement.as @user, i: @verb, a: @tinCanObject, in: @context, resulting_in: @result
+        beforeEach -> @r = @statement.as @user, i: @verb, a: @activity, in: @context, resulting_in: @result
         it 'should set the "Actor"', -> @r.actor.should.equal @user
         it 'should set the "Verb"', -> @r.verb.should.equal @verb
-        it 'should set the "Object"', -> @r.object.should.equal @tinCanObject
+        it 'should set the "Object"', -> @r.object.should.equal @activity
         it 'should set the "Context"', -> @r.context.should.equal @context
         it 'should set the "Result"', -> @r.result.should.equal @result
 
@@ -31,8 +32,8 @@ describe 'Statement', ->
       it 'should be chainable', -> @r.should.equal @statement
 
     describe 'a', ->
-      beforeEach -> @r = @statement.a @tinCanObject
-      it 'should set the "Object"', -> @r.object.should.equal @tinCanObject
+      beforeEach -> @r = @statement.a @activity
+      it 'should set the "Object"', -> @r.object.should.equal @activity
       it 'should be chainable', -> @r.should.equal @statement
 
     describe 'in', ->
@@ -50,11 +51,12 @@ describe 'Statement', ->
     before ->
       @event =
         timestamp: new Date().toString()
-      @user = Agent.extend().named 'Steve'
-      @completed = Verb.extend().displayed_as 'en-US': 'completed'
-      @scene = TinCanObject.extend().definition_named_as 'scene'
-      @scenario = Context.extend()
-      @score = Result.extend().scored_as '1'
+
+      @user = Agent.extend()
+      @completed = Verb.extend()
+      @scene = Activity.extend()
+      @scenario = Context
+      @score = Result.extend()
 
     beforeEach ->
       @statement = new Statement

@@ -19,6 +19,7 @@ class Statement
 
   loadDefinitionsFrom: (definitionLoader) ->
     @definitionLoader = definitionLoader
+    this
 
   as: (actor, options) ->
     @actor = actor
@@ -66,7 +67,6 @@ class Statement
     @timestamp = timestamp
     this
 
-  # Compiliation
   compile: (event) ->
     actor: @definitionLoader.findDefinition(@actor).compile event
     verb: @definitionLoader.findDefinition(@verb).compile()

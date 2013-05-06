@@ -1,17 +1,10 @@
-Module = require './module'
+TinFoilObject = require './tin-foil-object'
+URI = String
+LanguageMap = Object
 
-class Verb extends Module
+class Verb extends TinFoilObject
 
-  @identified_as: (id) ->
-    @id = id
-    this
-
-  @displayed_as: (display) ->
-    @display = display
-    this
-
-  @compile: ->
-    id: @id
-    display: @display
+  @prop 'id', as: URI, aliases: ['identified_as', 'identify_from']
+  @prop 'display', as: LanguageMap, aliases: ['displayed_as', 'display_from']
 
 module.exports = Verb

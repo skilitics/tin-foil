@@ -1,14 +1,14 @@
-Module = require './module'
-Util = require './util'
+TinFoilObject = require './tin-foil-object'
+TinFoilCollection = require './tin-foil-collection'
+ScoreObject = {}
 
-class Result extends Module
+class Result extends TinFoilObject
 
-  @scored_from: (fn) -> @scored_as fn
-  @scored_as: (score) ->
-    @score = score
-    this
-
-  @compile: (event) ->
-    score: Util.callOrReturn(this, @score, event)
+  @prop 'score', as: ScoreObject, aliases: ['scored', 'score_from']
+  @prop 'success', as: Boolean, aliases: ['success_as', 'success_from']
+  @prop 'completion', as: Boolean, aliases: ['completed', 'completion_from']
+  @prop 'response', as: String, aliases: ['response_as', 'response_from']
+  @prop 'duration', as: Date, aliases: ['duration_as', 'duration_from']
+  @prop 'extensions', as: TinFoilCollection, aliases: ['with_extension']
 
 module.exports = Result
