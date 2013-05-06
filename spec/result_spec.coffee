@@ -20,9 +20,9 @@ describe 'Result', ->
     it 'should validate as a Boolean'
 
   describe 'completion', ->
-    props.shouldHaveProp 'result', 'completition'
-    props.shouldHaveAlias 'result', 'completition', 'completed'
-    props.shouldHaveAlias 'result', 'completition', 'completition_from'
+    props.shouldHaveProp 'result', 'completion'
+    props.shouldHaveAlias 'result', 'completion', 'completed'
+    props.shouldHaveAlias 'result', 'completion', 'completion_from'
 
     it 'should validate as a Boolean'
 
