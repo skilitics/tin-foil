@@ -2,8 +2,8 @@ TinFoilObject = require './tin-foil-object'
 
 class InteractionActivities extends TinFoilObject
 
-  @add 'interactionType', String
-  @add 'correctResponsePattern', Array
-  @add 'choices', Array
+  @prop 'interactionType', as: String
+  @prop 'correctResponsePattern', as: Array
+  @prop 'choices', as: Array
 
 module.exports = InteractionActivities

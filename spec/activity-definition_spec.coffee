@@ -1,5 +1,8 @@
 ActivityDefinition = require '../lib/activity-definition'
 props = require './behaviours/props'
+shouldBehaveLike = require './behaviours/should-behave-like'
+
+should = require('chai').should()
 
 describe 'Activity Definition', ->
 
@@ -36,3 +39,4 @@ describe 'Activity Definition', ->
   it 'should have interaction properties'
   it 'should have extensions'
 
+  shouldBehaveLike.interactionActivities 'definition'

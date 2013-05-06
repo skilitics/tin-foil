@@ -1,5 +1,6 @@
 Agent = require '../lib/agent'
 props = require './behaviours/props'
+shouldBehaveLike = require './behaviours/should-behave-like'
 
 describe 'Agent', ->
 
@@ -16,4 +17,4 @@ describe 'Agent', ->
 
     it 'should validate as a String'
 
-# behavesLike.inverseFunctionalIdentifier()
+  shouldBehaveLike.inverseFunctionalIdentifier 'agent'

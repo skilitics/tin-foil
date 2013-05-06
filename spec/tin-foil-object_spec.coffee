@@ -143,3 +143,39 @@ describe 'TinFoilObject', ->
       @base.add_to_my_map 'another-key', -> 'another-value'
       @base.compile().my_map['some-key'].should.equal 'some-value'
       @base.compile().my_map['another-key'].should.equal 'another-value'
+
+  describe 'Mixins', ->
+
+    beforeEach ->
+      @mix = TinFoilObject.extend()
+      @mix.prop 'mixed', as: String, aliases: ['mixed_in']
+      @base.prop 'keep', as: String, aliases: ['keep_me']
+      @base.mixin @mix
+
+    it 'should mix in the properties', ->
+      expect(@base.get('mixed')).to.not.be.undefined
+
+    it 'should map the mixin aliases', ->
+      expect(@base.mixed_in).to.not.be.undefined
+
+    it 'should still have the base properties', ->
+      expect(@base.get('keep')).to.not.be.undefined
+
+    it 'should still have the base aliases', ->
+      expect(@base.keep_me).to.not.be.undefined
+
+
+  describe 'Extend', ->
+
+    beforeEach ->
+      @base.prop 'extension', as: String, aliases: ['my_extension']
+      @extended = @base.extend()
+
+    it 'should extend the object', ->
+      @extended.prototype.should.be.instanceOf @base
+
+    it 'should still have the base methods', ->
+      expect(@extended.get('extension')).to.not.be.undefined
+
+    it 'should still have the aliases', ->
+      expect(@extended.my_extension).to.not.be.undefined

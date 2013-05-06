@@ -1,15 +1,18 @@
 TinFoilCollection = require './tin-foil-collection'
 TinFoilMap = require './tin-foil-map'
 
-moduleKeywords = ['mixin', 'extend']
+keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasProp', 'add', 'compile', '_addPropertyAlias',
+            '_mapNestedAliases', '_mapCollectionAliases', '_mapMapAliases']
 
 class TinFoilObject
 
-  @mixin: (obj, prefix) ->
-    throw new Error('mixin(obj) requires obj') unless obj
-    for own key, value of obj when key not in moduleKeywords
-      @["#{prefix}#{key}"] = value
+  @extend: (statics) ->
+    class Result extends this
+    Result.mixin(statics) if statics
+    Result
 
+  @mixin: (obj) ->
+    @prop name, as: prop.type, aliases: prop.aliases for own name, prop of obj.props
     this
 
   @set: (name, value, aliases = []) ->
@@ -55,6 +58,26 @@ class TinFoilObject
 
     this
 
+  @compile: (event) ->
+    object = {}
+
+    for own name, property of @props
+      if property.type == TinFoilCollection or property.type == TinFoilMap
+        val = property.value.compile(event)
+
+      else if property.value
+        if property.value instanceof Function
+          val = property.value.call(this, event)
+        else
+          val = property.value
+
+      else if property.type?.prototype instanceof TinFoilObject
+        val = property.type.compile(event)
+
+      object[name] = val
+
+    object
+
   @_addPropertyAlias: (propertyName, type, alias, propertyStore) ->
     @[alias] = (val) =>
       propertyStore[propertyName] =
@@ -88,30 +111,5 @@ class TinFoilObject
         this
 
     this
-
-  @extend: (statics) ->
-    class Result extends this
-    Result.mixin(statics) if statics
-    Result
-
-  @compile: (event) ->
-    object = {}
-
-    for own name, property of @props
-      if property.type == TinFoilCollection or property.type == TinFoilMap
-        val = property.value.compile(event)
-
-      else if property.value
-        if property.value instanceof Function
-          val = property.value.call(this, event)
-        else
-          val = property.value
-
-      else if property.type?.prototype instanceof TinFoilObject
-        val = property.type.compile(event)
-
-      object[name] = val
-
-    object
 
 module.exports = TinFoilObject

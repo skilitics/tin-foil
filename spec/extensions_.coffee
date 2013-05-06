@@ -4,8 +4,6 @@ props = require './behaviours/props'
 describe 'Extensions', ->
 
   beforeEach ->
-
-
     class @MyClass extends TinFoilObject
       @mixin Extensions
 

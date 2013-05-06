@@ -13,6 +13,6 @@ class ActivityDefinition extends TinFoilObject
   @prop 'type', as: URI, aliases: ['typed_as', 'type_from']
   @prop 'moreinfo', as: URL, aliases: ['more_info_as', 'more_info_from']
   @mixin InteractionActivities
-  @add 'extension', Extensions
+  @prop 'extension', as: Extensions
 
 module.exports = ActivityDefinition
