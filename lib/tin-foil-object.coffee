@@ -38,13 +38,16 @@ class TinFoilObject
 
     @props ?= {}
 
-    prop = @props[name] =
-      name: name
-      type: type
-      value: value
-      aliases: aliases
+    prop = if @hasProp(name) then @get(name) else {}
+
+    prop.name = name
+    prop.type = type
+    prop.value = value
+    prop.aliases = aliases
 
     if aliases then @_mapAliases prop
+
+    @props[name] = prop
 
     this
 
@@ -69,6 +72,11 @@ class TinFoilObject
       object[name] = val if val
 
     object
+
+  @validate: (event) ->
+    errors = []
+
+    if errors.length then errors else true
 
   @_mapAliases: (property) ->
     name = property.name

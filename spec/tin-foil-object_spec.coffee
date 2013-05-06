@@ -247,3 +247,15 @@ describe 'TinFoilObject', ->
         @compiled.map['map_value_1'].should.equal 'map value 1'
         @compiled.map['map_value_2'].should.equal 'map value 2'
 
+  describe 'Validation', ->
+
+    beforeEach ->
+      @base.prop 'my-string', as: String
+
+    it 'should pass when the value type is correct', ->
+      @base.set 'my-string', to: 'a string'
+      @base.validate().should.be.true
+
+    it 'should fail when the value type is wrong', ->
+      @base.set 'my-string', to: 123
+#      @base.validate()['my-string'].should.equal 'my-string should be of type String but Number was found'
