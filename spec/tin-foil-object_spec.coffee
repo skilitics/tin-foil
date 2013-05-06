@@ -197,6 +197,7 @@ describe 'TinFoilObject', ->
 
       @base.set 'property_1', 'property1'
       @base.set 'property_2', (event) -> event.property2
+      @base.prop 'not_set'
       @base.prop 'nest', as: @nest
       @base.mixin @mix
 
@@ -216,3 +217,6 @@ describe 'TinFoilObject', ->
 
     it 'should compile mixed properties', ->
       @compiled.mix.should.equal 'mixed'
+
+    it 'should not include properties with a value of "undefined"', ->
+      expect(@compiled.not_set).to.be.undefined

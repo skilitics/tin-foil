@@ -52,6 +52,8 @@ class TinFoilObject
     object = {}
 
     for own name, property of @props
+      val = null
+
       if property.type == TinFoilCollection or property.type == TinFoilMap
         val = property.value.compile(event)
 
@@ -64,7 +66,7 @@ class TinFoilObject
         else
           val = property.value
 
-      object[name] = val
+      object[name] = val if val
 
     object
 
