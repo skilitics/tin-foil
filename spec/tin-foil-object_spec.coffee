@@ -188,6 +188,7 @@ describe 'TinFoilObject', ->
         nest:
           nested: 'nested'
         mix: 'mixed'
+        collectionValue2: 'collection value 2'
 
       @nest = TinFoilObject.extend()
       @nest.set 'nested', to: (event) -> event.nest.nested
@@ -201,8 +202,15 @@ describe 'TinFoilObject', ->
       @base.prop 'nest', as: @nest
       @base.mixin @mix
 
-      @base.prop 'collection', as: TinFoilCollection
-      @base.prop 'map', as: TinFoilMap
+      @base.prop 'empty_collection', as: TinFoilCollection
+      @base.prop 'collection', as: TinFoilCollection, aliases: ['add_to_collection']
+      @base.add_to_collection 'collection value 1'
+      @base.add_to_collection (event) -> event.collectionValue2
+
+      @base.prop 'empty_map', as: TinFoilMap
+      @base.prop 'map', as: TinFoilMap, aliases: ['add_to_map']
+      @base.add_to_map 'map_value_1', 'map value 1'
+      @base.add_to_map 'map_value_2', 'map value 2'
 
       @compiled = @base.compile @event
 
@@ -220,3 +228,22 @@ describe 'TinFoilObject', ->
 
     it 'should not include properties with a value of "undefined"', ->
       expect(@compiled.not_set).to.be.undefined
+
+    describe 'collections', ->
+      it 'should not include empty collections', ->
+        expect(@compiled.empty_collection).to.be.undefined
+
+      it 'should compile the collection', ->
+        @compiled.collection.should.be.an 'Array'
+        @compiled.collection[0].should.equal 'collection value 1'
+        @compiled.collection[1].should.equal 'collection value 2'
+
+    describe 'maps', ->
+      it 'should not indlue empty maps', ->
+        expect(@compiled.empty_map).to.be.undefined
+
+      it 'should compile the map', ->
+        @compiled.map.should.be.an 'Object'
+        @compiled.map['map_value_1'].should.equal 'map value 1'
+        @compiled.map['map_value_2'].should.equal 'map value 2'
+

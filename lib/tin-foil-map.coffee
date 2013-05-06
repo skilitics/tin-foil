@@ -10,11 +10,15 @@ class TinFoilMap
 
   compile: (event) ->
     map = {}
+    hasKeys = false
+
     for own key, value of @map
+      hasKeys = true
       if value instanceof Function
         map[key] = value.call(this, event)
       else
         map[key] = value
-    map
+
+    if hasKeys then map else null
 
 module.exports = TinFoilMap

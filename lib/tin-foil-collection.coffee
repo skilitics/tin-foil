@@ -16,6 +16,6 @@ class TinFoilCollection
       else
         result.push item
 
-    result
+    if result.length then result else null
 
 module.exports = TinFoilCollection
