@@ -39,31 +39,31 @@ describe 'TinFoilObject', ->
   describe 'Adding properties', ->
 
     it 'should allow adding properties', ->
-      @base.add 'property'
+      @base.prop 'property'
       ( => @base.get('property')).should.not.throw()
 
     it 'should allow adding typed properties', ->
-      @base.add 'property', String
+      @base.prop 'property', as: String
       prop = @base.get('property')
       prop.type.should.equal String
 
     it 'should allow adding aliases', ->
-      @base.add 'property', String, ['add_property', 'set_property']
+      @base.prop 'property', aliases: ['add_property', 'set_property']
       expect(@base.add_property).to.not.be.undefined
       expect(@base.set_property).to.not.be.undefined
 
     it 'should be chainable', ->
-      @base.add('property').should.equal @base
+      @base.prop('property').should.equal @base
 
   describe 'Aliases', ->
 
     it 'should be able to set static property values', ->
-      @base.add 'property', String, ['set_property']
+      @base.prop 'property', aliases: ['set_property']
       @base.set_property 'a-static-value'
       @base.get('property').value.should.equal 'a-static-value'
 
     it 'should be able to set dynamic property values', ->
-      @base.add 'property', String, ['set_property']
+      @base.prop 'property', aliases: ['set_property']
       @base.set_property -> 'a-dynamic-value'
       @base.compile().property.should.equal 'a-dynamic-value'
 
@@ -179,3 +179,40 @@ describe 'TinFoilObject', ->
 
     it 'should still have the aliases', ->
       expect(@extended.my_extension).to.not.be.undefined
+
+  describe 'Compilation', ->
+
+    beforeEach ->
+      @event =
+        property2: 'property2'
+        nest:
+          nested: 'nested'
+        mix: 'mixed'
+
+      @nest = TinFoilObject.extend()
+      @nest.set 'nested', to: (event) -> event.nest.nested
+
+      @mix = TinFoilObject.extend()
+      @mix.set 'mix', to: (event) -> event.mix
+
+      @base.set 'property_1', 'property1'
+      @base.set 'property_2', (event) -> event.property2
+      @base.prop 'nest', as: @nest
+      @base.mixin @mix
+
+      @base.prop 'collection', as: TinFoilCollection
+      @base.prop 'map', as: TinFoilMap
+
+      @compiled = @base.compile @event
+
+    it 'should compile static properties', ->
+      @compiled.property_1.should.equal 'property1'
+
+    it 'should compile dynamic properties', ->
+      @compiled.property_2.should.equal 'property2'
+
+    it 'should compile nested properties', ->
+      @compiled.nest.nested.should.equal 'nested'
+
+    it 'should compile mixed properties', ->
+      @compiled.mix.should.equal 'mixed'

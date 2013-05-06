@@ -1,7 +1,7 @@
 TinFoilCollection = require './tin-foil-collection'
 TinFoilMap = require './tin-foil-map'
 
-keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasProp', 'add', 'compile', '_addPropertyAlias',
+keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasProp', 'add', 'compile', '_mapAliases', '_addPropertyAlias',
             '_mapNestedAliases', '_mapCollectionAliases', '_mapMapAliases']
 
 class TinFoilObject
@@ -12,49 +12,39 @@ class TinFoilObject
     Result
 
   @mixin: (obj) ->
-    @prop name, as: prop.type, aliases: prop.aliases for own name, prop of obj.props
+    for own name, prop of obj.props
+      @props[name] = prop
+      @_mapAliases prop
     this
 
   @set: (name, value, aliases = []) ->
-    @props ?= {}
-
-    prop = @props[name] or {}
-    prop.value = value.to || value
-    prop.aliases = aliases
-    delete prop.type if prop.type
-
-    @props[name] = prop
-    this
+    @prop name, default_as: value.to || value, aliases: aliases
 
   @get: (name) ->
     throw Error "Property [#{name}] has not been defined" unless @hasProp name
     @props[name]
 
-  @prop: (name, options) ->
-    return @get name unless options
-    @add name, options.as, options.aliases
-    this
-
   @hasProp: (name) -> !!@props and !!@props[name]
 
-  @add: (propertyName, type, aliases = []) ->
+  @prop: (name, options) ->
+    if options
+      type = options.as
+      value = options.default_as
+      aliases = options.aliases
+
+    type ?= {}
+    value ?= null
+    aliases ?= []
+
     @props ?= {}
-    prop = @props[propertyName] =
-      name: propertyName
+
+    prop = @props[name] =
+      name: name
       type: type
-      value: null
+      value: value
       aliases: aliases
 
-    if type?.prototype instanceof TinFoilObject
-      @_mapNestedAliases propertyName, type
-    else if type == TinFoilCollection
-      prop.value = new type()
-      @_mapCollectionAliases prop
-    else if type == TinFoilMap
-      prop.value = new TinFoilMap
-      @_mapMapAliases prop
-    else
-      @_addPropertyAlias propertyName, type, alias, @props for alias in aliases
+    if aliases then @_mapAliases prop
 
     this
 
@@ -65,26 +55,43 @@ class TinFoilObject
       if property.type == TinFoilCollection or property.type == TinFoilMap
         val = property.value.compile(event)
 
+      else if property.type?.prototype instanceof TinFoilObject
+        val = property.type.compile(event)
+
       else if property.value
         if property.value instanceof Function
           val = property.value.call(this, event)
         else
           val = property.value
 
-      else if property.type?.prototype instanceof TinFoilObject
-        val = property.type.compile(event)
-
       object[name] = val
 
     object
 
+  @_mapAliases: (property) ->
+    name = property.name
+    type = property.type
+    aliases = property.aliases
+
+    if type.prototype instanceof TinFoilObject
+      @_mapNestedAliases name, type
+
+    else if type == TinFoilCollection
+      property.value = new type()
+      @_mapCollectionAliases property
+
+    else if type == TinFoilMap
+      property.value = new TinFoilMap
+      @_mapMapAliases property
+
+    else
+      @_addPropertyAlias name, type, alias, @props for alias in aliases
+
   @_addPropertyAlias: (propertyName, type, alias, propertyStore) ->
     @[alias] = (val) =>
-      propertyStore[propertyName] =
-        name: propertyName
-        type: type
-        value: val
-        aliases: []
+      prop = propertyStore[propertyName]
+      throw Error "Property [#{propertyName}] not found in store" unless prop
+      prop.value = val
       this
 
     this

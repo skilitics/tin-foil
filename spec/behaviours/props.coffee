@@ -1,5 +1,5 @@
 require '../assertions'
-{ should } = require 'chai'
+should = require('chai').should()
 
 a = (word) -> if (word[0] in ['a', 'e', 'i', 'o', 'u']) then 'an' else 'a'
 
@@ -9,4 +9,4 @@ exports.shouldHaveProp = (obj, prop) ->
 
 exports.shouldHaveAlias = (obj, prop, alias) ->
   it "should have #{a(alias)} '#{alias}' alias", ->
-    @[obj].prop(prop).should.have.alias alias
+    @[obj].get(prop).should.have.alias alias
