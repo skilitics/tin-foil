@@ -36,7 +36,10 @@ describe 'Activity Definition', ->
 
     it 'should validate as a URL'
 
-  it 'should have interaction properties'
-  it 'should have extensions'
-
   shouldBehaveLike.interactionActivities 'definition'
+
+  describe 'extensions', ->
+    props.shouldHaveProp 'definition', 'extensions'
+    props.shouldHaveAlias 'definition', 'extensions', 'with_extension'
+
+    it 'should validate as a TinFoilMap'

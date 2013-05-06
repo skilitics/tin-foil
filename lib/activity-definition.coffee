@@ -1,8 +1,7 @@
 TinFoilObject = require './tin-foil-object'
-#LanguageMap = require './language-map'
-LanguageMap = Object
+TinFoilMap = require './tin-foil-map'
+LanguageMap = {}
 InteractionActivities = require './interaction-activities'
-Extensions = require './extensions'
 URI = String
 URL = String
 
@@ -13,6 +12,6 @@ class ActivityDefinition extends TinFoilObject
   @prop 'type', as: URI, aliases: ['typed_as', 'type_from']
   @prop 'moreinfo', as: URL, aliases: ['more_info_as', 'more_info_from']
   @mixin InteractionActivities
-  @prop 'extension', as: Extensions
+  @prop 'extensions', as: TinFoilMap, aliases: ['with_extension']
 
 module.exports = ActivityDefinition

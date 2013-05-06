@@ -7,9 +7,11 @@ exports.interactionActivities = (obj) ->
 
   describe 'correctResponsePattern', ->
     props.shouldHaveProp obj, 'correctResponsePattern'
+    props.shouldHaveAlias obj, 'correctResponsePattern', 'add_correct_response_pattern'
 
   describe 'choices', ->
     props.shouldHaveProp obj, 'choices'
+    props.shouldHaveAlias obj, 'choices', 'add_choice'
 
 
 exports.inverseFunctionalIdentifier = (obj) ->

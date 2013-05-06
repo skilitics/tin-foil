@@ -18,3 +18,8 @@ describe 'Activity', ->
     props.shouldHaveAlias 'scene', 'id', 'identify_from'
 
     it 'should validate as a URI'
+
+  describe 'definition', ->
+    props.shouldHaveProp 'scene', 'definition'
+
+    it 'should validate as a TinFoilMap'

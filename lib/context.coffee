@@ -1,6 +1,6 @@
 TinFoilObject = require './tin-foil-object'
+TinFoilMap = require './tin-foil-map'
 Agent = require './agent'
-Extension = require './extensions'
 
 UUID = String
 Group = {}
@@ -18,6 +18,6 @@ class Context extends TinFoilObject
 
 #  @prop 'statement', Statement
 
-  @prop 'extensions', as_map_of: Extension, aliases: ['with_extension']
+  @prop 'extensions', as: TinFoilMap, aliases: ['with_extension']
 
 module.exports = Context
