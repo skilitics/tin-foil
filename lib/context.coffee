@@ -14,7 +14,7 @@ class Context extends TinFoilObject
   @prop 'contextActivities', ContextActivities
   @prop 'revision', as: String, aliases: ['revisioned_as', 'revision_from']
   @prop 'platform', as: String, aliases: ['platform_as', 'platform_from']
-  @prop 'language', String, 'language_as', 'language_from'
+  @prop 'language', as: String, aliases: ['language_as', 'language_from']
 
 #  @prop 'statement', Statement
 

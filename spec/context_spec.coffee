@@ -44,6 +44,13 @@ describe 'Context', ->
 
     it 'should validate as a String'
 
+  describe 'language', ->
+    props.shouldHaveProp 'context', 'language'
+    props.shouldHaveAlias 'context', 'language', 'language_as'
+    props.shouldHaveAlias 'context', 'language', 'language_from'
+
+    it 'should validate as a String'
+
   describe 'statement', ->
 
   describe 'extensions', ->
