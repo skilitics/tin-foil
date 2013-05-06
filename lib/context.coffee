@@ -1,17 +1,17 @@
 TinFoilObject = require './tin-foil-object'
 TinFoilMap = require './tin-foil-map'
+ContextActivities = require './context-activities'
 Agent = require './agent'
 
 UUID = String
 Group = {}
-ContextActivities = {}
 
 class Context extends TinFoilObject
 
   @prop 'registration', as: UUID, aliases: ['registered_as', 'registration_from']
   @prop 'instructor', as: Agent
   @prop 'team', as: Group, 'teamed_as', 'team_from'
-  @prop 'contextActivities', ContextActivities
+  @prop 'contextActivities', as: ContextActivities, aliases: ['context']
   @prop 'revision', as: String, aliases: ['revisioned_as', 'revision_from']
   @prop 'platform', as: String, aliases: ['platform_as', 'platform_from']
   @prop 'language', as: String, aliases: ['language_as', 'language_from']
