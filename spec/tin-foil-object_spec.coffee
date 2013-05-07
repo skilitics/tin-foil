@@ -168,7 +168,7 @@ describe 'TinFoilObject', ->
   describe 'Extend', ->
 
     beforeEach ->
-      @base.prop 'extension', as: String, aliases: ['my_extension']
+      @base.prop 'extension', as: String, aliases: ['my_extension'], default_as: 'original-value'
       @extended = @base.extend()
 
     it 'should extend the object', ->
@@ -179,6 +179,10 @@ describe 'TinFoilObject', ->
 
     it 'should still have the aliases', ->
       expect(@extended.my_extension).to.not.be.undefined
+
+    it 'should not alter base properties', ->
+      @extended.my_extension 'new-value'
+      @base.get('extension').value.should.equal 'original-value'
 
   describe 'Compilation', ->
 
