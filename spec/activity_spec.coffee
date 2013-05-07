@@ -22,4 +22,4 @@ describe 'Activity', ->
   describe 'definition', ->
     props.shouldHaveProp 'scene', 'definition'
 
-    it 'should validate as a TinFoilMap'
+    it 'should validate as an ActivityDefinition'
