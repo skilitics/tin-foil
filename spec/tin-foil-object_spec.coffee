@@ -189,9 +189,14 @@ describe 'TinFoilObject', ->
           nested: 'nested'
         mix: 'mixed'
         collectionValue2: 'collection value 2'
+        nestedCollectionValue2: 'nested collection value 2'
+        mapValue2: 'map value 2'
+        nestedMapValue2: 'nested map value 2'
 
       @nest = TinFoilObject.extend()
       @nest.set 'nested', to: (event) -> event.nest.nested
+      @nest.prop 'map', as: TinFoilMap, aliases: ['add_to_map']
+      @nest.prop 'collection', as: TinFoilCollection, aliases: ['add_to_collection']
 
       @mix = TinFoilObject.extend()
       @mix.set 'mix', to: (event) -> event.mix
@@ -206,11 +211,15 @@ describe 'TinFoilObject', ->
       @base.prop 'collection', as: TinFoilCollection, aliases: ['add_to_collection']
       @base.add_to_collection 'collection value 1'
       @base.add_to_collection (event) -> event.collectionValue2
+      @base.nest_add_to_collection 'nested collection value 1'
+      @base.nest_add_to_collection (event) -> event.nestedCollectionValue2
 
       @base.prop 'empty_map', as: TinFoilMap
       @base.prop 'map', as: TinFoilMap, aliases: ['add_to_map']
       @base.add_to_map 'map_value_1', 'map value 1'
-      @base.add_to_map 'map_value_2', 'map value 2'
+      @base.add_to_map 'map_value_2', (event) -> event.mapValue2
+      @base.nest_add_to_map 'nested_map_value_1', 'nested map value 1'
+      @base.nest_add_to_map 'nested_map_value_2', (event) -> event.nestedMapValue2
 
       @compiled = @base.compile @event
 
@@ -238,6 +247,11 @@ describe 'TinFoilObject', ->
         @compiled.collection[0].should.equal 'collection value 1'
         @compiled.collection[1].should.equal 'collection value 2'
 
+      it 'should compile nested collections', ->
+        @compiled.nest.collection.should.be.an 'Array'
+        @compiled.nest.collection[0].should.equal 'nested collection value 1'
+        @compiled.nest.collection[1].should.equal 'nested collection value 2'
+
     describe 'maps', ->
       it 'should not indlue empty maps', ->
         expect(@compiled.empty_map).to.be.undefined
@@ -246,4 +260,9 @@ describe 'TinFoilObject', ->
         @compiled.map.should.be.an 'Object'
         @compiled.map['map_value_1'].should.equal 'map value 1'
         @compiled.map['map_value_2'].should.equal 'map value 2'
+
+      it 'should compile nested maps', ->
+        @compiled.nest.map.should.be.an 'Object'
+        @compiled.nest.map['nested_map_value_1'].should.equal 'nested map value 1'
+        @compiled.nest.map['nested_map_value_2'].should.equal 'nested map value 2'
 

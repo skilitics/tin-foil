@@ -1,8 +1,8 @@
 TinFoilCollection = require './tin-foil-collection'
 TinFoilMap = require './tin-foil-map'
 
-keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasProp', 'add', 'compile', '_mapAliases', '_addPropertyAlias',
-            '_mapNestedAliases', '_mapCollectionAliases', '_mapMapAliases']
+keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasProp', 'add', 'compile', '_mapAliases', '_mapPropertyAlias',
+            '_mapNestedAliases', '_mapTinFoilCollectionAliases', '_mapTinFoilMapAliases']
 
 class TinFoilObject
 
@@ -44,7 +44,7 @@ class TinFoilObject
       value: value
       aliases: aliases
 
-    if aliases then @_mapAliases prop
+    @_mapAliases prop
 
     this
 
@@ -70,52 +70,53 @@ class TinFoilObject
 
     object
 
-  @_mapAliases: (property) ->
+  @_mapAliases: (property, prefix = '', propertyStore = @props) ->
     name = property.name
     type = property.type
     aliases = property.aliases
 
     if type.prototype instanceof TinFoilObject
-      @_mapNestedAliases name, type
+      @_mapTinFoilObjectAliases type, "#{name}_", type.props
 
     else if type == TinFoilCollection
       property.value = new type()
-      @_mapCollectionAliases property
+      @_mapTinFoilCollectionAliases property, prefix
 
     else if type == TinFoilMap
       property.value = new TinFoilMap
-      @_mapMapAliases property
+      @_mapTinFoilMapAliases property, prefix
 
     else
-      @_addPropertyAlias name, type, alias, @props for alias in aliases
+      @_mapPropertyAlias name, type, "#{prefix}#{alias}", propertyStore for alias in aliases
 
-  @_addPropertyAlias: (propertyName, type, alias, propertyStore) ->
+  @_mapPropertyAlias: (name, type, alias, propertyStore) ->
     @[alias] = (val) =>
-      prop = propertyStore[propertyName]
-      throw Error "Property [#{propertyName}] not found in store" unless prop
+      prop = propertyStore[name]
+      throw Error "Property [#{name}] not found in store" unless prop
       prop.value = val
       this
 
     this
 
-  @_mapNestedAliases: (propertyName, extensionType) ->
-    for own name, property of extensionType.props
-      for alias in property.aliases
-        @_addPropertyAlias name, extensionType, "#{propertyName}_#{alias}", extensionType.props
+  @_mapTinFoilObjectAliases: (type, prefix = '', propertyStore = @props) ->
+    for own name, property of type.props
+      @_mapAliases property, prefix, propertyStore
+#      for alias in property.aliases
+#        @_addPropertyAlias name, extensionType, "#{propertyName}_#{alias}", extensionType.props
 
     this
 
-  @_mapCollectionAliases: (property) ->
+  @_mapTinFoilCollectionAliases: (property, prefix = '') ->
     for alias in property.aliases
-      @[alias] = (val) =>
+      @["#{prefix}#{alias}"] = (val) =>
         property.value.add val
         this
 
     this
 
-  @_mapMapAliases: (property) ->
+  @_mapTinFoilMapAliases: (property, prefix = '') ->
     for alias in property.aliases
-      @[alias] = (key, value) =>
+      @["#{prefix}#{alias}"] = (key, value) =>
         property.value.add key, value
         this
 
