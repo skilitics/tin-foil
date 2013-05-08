@@ -8,7 +8,7 @@ class TinFoil
 
   constructor: ->
     @properties = {}
-    @properties[name] = @buildProperty definition for own name, definition of @definitions
+    @properties[name] = @buildProperty definition for own name, definition of @_definitions
 
   buildProperty: (definition) ->
     name: definition.name
@@ -18,12 +18,12 @@ class TinFoil
   @extend: (statics) ->
     class Result extends this
     Result.mixin(statics) if statics
-    Result.definitions = {}
+    Result._definitions = {}
     Result
 
   @mixin: (obj) ->
-    for own name, prop of obj.definitions
-      @definitions[name] = prop
+    for own name, prop of obj._definitions
+      @_definitions[name] = prop
       @_mapDefinitionAliases prop
     this
 
@@ -43,7 +43,7 @@ class TinFoil
   @hasDefinition: (name) -> findDefinition name, this
 
   @define: (name, options, mapAliases = true) ->
-    @definitions ?= {}
+    @_definitions ?= {}
 
     if options
       type = options.as or options.type or {}
@@ -64,9 +64,9 @@ class TinFoil
       defaultValue = new type
 
     # We don't want to re-create aliases if it already exists
-    if @definitions[name] then mapAliases = false
+    if @_definitions[name] then mapAliases = false
 
-    definition = @definitions[name] =
+    definition = @_definitions[name] =
       name: name
       type: type
       defaultValue: defaultValue
@@ -80,7 +80,7 @@ class TinFoil
   @compile: (data) ->
     object = {}
 
-    for own name, property of @definitions
+    for own name, property of @_definitions
       val = null
 
       if property.type.isTinFoil
@@ -158,13 +158,13 @@ class TinFoil
 
 
 findDefinition = (name, context) ->
-  definition = findLocalDefinition name, context.definitions
+  definition = findLocalDefinition name, context._definitions
 
   return definition if definition
 
   parent = context.__super__?.constructor
-  if parent and parent.definitions
     definition = findDefinition name, parent
+  if parent and parent._definitions
 
   definition
 
