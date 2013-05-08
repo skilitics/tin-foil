@@ -9,6 +9,26 @@ describe 'TinFoil', ->
 
   beforeEach -> @Base = TinFoil.extend()
 
+  describe 'definitions', ->
+
+    beforeEach ->
+      @Base.set 'property_1', to: 'property 1'
+      @Base.set 'property_2', to: 'property 2'
+      @Extended = @Base.extend()
+      @Extended.set 'property_3', to: 'property 3'
+
+    it 'should return all inherited definitions', ->
+      @Extended.definitions()['property_1'].defaultValue.should.equal 'property 1'
+      @Extended.definitions()['property_2'].defaultValue.should.equal 'property 2'
+      @Extended.definitions()['property_3'].defaultValue.should.equal 'property 3'
+
+    it 'should return the overridden definitions', ->
+      @Extended.set 'property_2', to: 'overriden property'
+
+      @Extended.definitions()['property_1'].defaultValue.should.equal 'property 1'
+      @Extended.definitions()['property_2'].defaultValue.should.equal 'overriden property'
+      @Extended.definitions()['property_3'].defaultValue.should.equal 'property 3'
+
   describe 'setting definition default values', ->
 
     it 'should allow setting static definition default', ->

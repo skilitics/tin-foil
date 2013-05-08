@@ -36,11 +36,13 @@ class TinFoil
       aliases: options.with_aliases or options.aliases or []
 
   @definition: (name) ->
-    definition = findDefinition name, this
+    definition = findDefinition this, name
     throw Error "Property [#{name}] has not been defined" unless definition
     definition
 
-  @hasDefinition: (name) -> findDefinition name, this
+  @hasDefinition: (name) -> findDefinition this, name
+
+  @definitions: -> allDefinitions this
 
   @define: (name, options, mapAliases = true) ->
     @_definitions ?= {}
@@ -157,19 +159,28 @@ class TinFoil
   @isTinFoil: true
 
 
-findDefinition = (name, context) ->
+findDefinition = (context, name) ->
   definition = findLocalDefinition name, context._definitions
 
   return definition if definition
 
   parent = context.__super__?.constructor
-    definition = findDefinition name, parent
   if parent and parent._definitions
+    definition = findDefinition parent, name
 
   definition
 
 findLocalDefinition = (name, definitions) ->
   for own key, definition of definitions
     if key == name then return definition
+
+allDefinitions = (context, result = {}) ->
+  for own name, definition of context._definitions
+    result[name] = definition if !result[name]
+
+  if context.__super__?.constructor?._definitions
+    allDefinitions context.__super__.constructor, result
+
+  result
 
 module.exports = TinFoil
