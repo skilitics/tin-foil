@@ -8,6 +8,9 @@ class TinFoilCollection
     @collection.push item
     this
 
+  get: (index) ->
+    return @collection[index]
+
   compile: (event) ->
     result = []
     for item in @collection

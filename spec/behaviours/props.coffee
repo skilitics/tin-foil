@@ -9,4 +9,4 @@ exports.shouldHaveProp = (obj, prop) ->
 
 exports.shouldHaveAlias = (obj, prop, alias) ->
   it "should have #{a(alias)} '#{alias}' alias", ->
-    @[obj].get(prop).should.have.alias alias
+    @[obj].definition(prop).should.have.alias alias

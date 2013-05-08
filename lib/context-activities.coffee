@@ -1,10 +1,10 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 
-class ContextActivities extends TinFoilObject
+class ContextActivities extends TinFoil
 
-  @prop 'parent', as: Object, aliases: ['parented_as', 'parent_from']
-  @prop 'grouping', as: Object, aliases: ['grouping_as', 'grouping_from']
-  @prop 'category', as: Object, aliases: ['category_as', 'category_from']
-  @prop 'other', as: Object, aliases: ['other_as', 'other_from']
+  @define 'parent', as: Object, aliases: ['parented_as', 'parent_from']
+  @define 'grouping', as: Object, aliases: ['grouping_as', 'grouping_from']
+  @define 'category', as: Object, aliases: ['category_as', 'category_from']
+  @define 'other', as: Object, aliases: ['other_as', 'other_from']
 
 module.exports = ContextActivities

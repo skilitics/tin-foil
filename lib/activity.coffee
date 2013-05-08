@@ -1,13 +1,13 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 ActivityDefinition = require './activity-definition'
 
 URI = String
 
-class Activity extends TinFoilObject
+class Activity extends TinFoil
 
-  @set 'objectType', 'Activity'
+  @set 'objectType', to: 'Activity'
 
-  @prop 'id', as: URI, aliases: ['identified_as', 'identify_from']
-  @prop 'definition', as: ActivityDefinition
+  @define 'id', as: URI, with_aliases: ['identified_as', 'identify_from']
+  @define 'definition', as: ActivityDefinition, with_prefix: 'definition_'
 
 module.exports = Activity

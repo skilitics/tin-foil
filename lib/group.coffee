@@ -1,11 +1,11 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 TinFoilCollection = require './tin-foil-collection'
 
-class Group extends TinFoilObject
+class Group extends TinFoil
 
   @set 'objectType', to: 'Group'
 
-  @prop 'name', as: String, aliases: ['named', 'name_from']
-  @prop 'member', as: TinFoilCollection, aliases: ['add_member']
+  @define 'name', as: String, aliases: ['named', 'name_from']
+  @define 'member', as: TinFoilCollection, aliases: ['add_member']
 
 module.exports = Group

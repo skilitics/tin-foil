@@ -7,14 +7,14 @@ Install the module with: `npm install tin-foil`
 
 ## Usage
 
-Define your verbs, objects and contexts by extending Verb, TinFoilObject and Context:
+Define your verbs, objects and contexts by extending Verb, TinFoil and Context:
 
 **CoffeeScript**
 
 ``` CoffeeScript
-{ TinFoilObject } = require 'tin-foil'
+{ TinFoil } = require 'tin-foil'
 
-class SceneObject extends TinFoilObject
+class SceneObject extends TinFoil
   @of_type 'scene'
   @identified_by (event) -> "/activities/scene/#{event.scene.id}"
   @named_from (event) -> event.scene.title
@@ -23,7 +23,7 @@ class SceneObject extends TinFoilObject
 **JavaScript**
 
 ``` JavaScript
-var SceneObject = TinFoilObject.extend()
+var SceneObject = TinFoil.extend()
     .of_type('scene')
     .identified_by(function (event) { return "/activities/scene/" + event.scene.id; })
     .named_from(function (event) { return event.scene.title; });

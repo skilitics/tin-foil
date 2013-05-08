@@ -1,11 +1,11 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 InverseFunctionalIdentifer = require './inverse-functional-identifer'
 
-class Agent extends TinFoilObject
+class Agent extends TinFoil
 
   @set 'objectType', to: 'Agent'
 
-  @prop 'name', as: String, aliases: ['named', 'name_from']
+  @define 'name', as: String, aliases: ['named', 'name_from']
 
   @mixin InverseFunctionalIdentifer
 

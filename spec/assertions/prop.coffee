@@ -3,7 +3,7 @@
 Assertion.addMethod 'prop', (name, value) ->
   obj = this._obj
 
-  hasProp = obj.hasProp name
+  hasProp = obj.hasDefinition name
 
   this.assert(
     hasProp
