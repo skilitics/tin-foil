@@ -141,7 +141,7 @@ describe 'TinFoil', ->
     it 'should be chainable', ->
       @Base.define('property', as: String).should.equal @Base
 
-  xdescribe 'nested definitions', ->
+  describe 'nested definitions', ->
 
     beforeEach ->
       @SecondNest = TinFoil.extend()
@@ -303,13 +303,13 @@ describe 'TinFoil', ->
 
       @Base.add_to_collection 'collection value 1'
       @Base.add_to_collection (event) -> event.collectionValue2
-#      @Base.nest_add_to_collection 'nested collection value 1'
-#      @Base.nest_add_to_collection (event) -> event.nestedCollectionValue2
+      @Base.nest_add_to_collection 'nested collection value 1'
+      @Base.nest_add_to_collection (event) -> event.nestedCollectionValue2
 
       @Base.add_to_map 'map_value_1', 'map value 1'
       @Base.add_to_map 'map_value_2', (event) -> event.mapValue2
-#      @Base.nest_add_to_map 'nested_map_value_1', 'nested map value 1'
-#      @Base.nest_add_to_map 'nested_map_value_2', (event) -> event.nestedMapValue2
+      @Base.nest_add_to_map 'nested_map_value_1', 'nested map value 1'
+      @Base.nest_add_to_map 'nested_map_value_2', (event) -> event.nestedMapValue2
 
       @compiled = @Base.compile @event
 
