@@ -311,87 +311,66 @@ describe 'TinFoil', ->
       @Base.definition('extension').defaultValue.should.equal 'original-value'
 
   describe 'compilation', ->
+    Activity = require '../lib/activity'
 
     beforeEach ->
-      @event =
-        property2: 'property2'
-        nest:
-          nested: 'nested'
-        mix: 'mixed'
-        collectionValue2: 'collection value 2'
-        nestedCollectionValue2: 'nested collection value 2'
-        mapValue2: 'map value 2'
-        nestedMapValue2: 'nested map value 2'
+      @data =
+        tenantId: '4321-8765-dcba'
+        scene:
+          id: '1234-5678-abcd'
+          title: 'When Zombies Attack'
 
-      @Nest = TinFoil.extend()
-      @Nest.set 'nested', to: (event) -> event.nest.nested
-      @Nest.define 'map', as: TinFoilMap, with_alias: 'add_to_map'
-      @Nest.define 'collection', as: TinFoilCollection, with_alias: 'add_to_collection'
+      class @Scene extends Activity
+        @identify_from (data) -> "http://skilitix.com/xapi/activities/scene/#{data.scene.id}"
 
-      @Mix = TinFoil.extend()
-      @Mix.set 'mix', to: (event) -> event.mix
+        @definition_named 'en-US': 'Scene'
+        @definition_description_from (data) -> 'en-US': data.scene.title
+        @definition_typed_as 'http://skilitix.com/xapi/activities/node'
 
-      @Base.set 'property_1', 'property1'
-      @Base.set 'property_2', (event) -> event.property2
-      @Base.define 'nest', as: @Nest, with_prefix: 'nest_'
-      @Base.define 'empty_collection', as: TinFoilCollection
-      @Base.define 'collection', as: TinFoilCollection, with_alias: 'add_to_collection'
-      @Base.define 'empty_map', as: TinFoilMap
-      @Base.define 'map', as: TinFoilMap, with_alias: 'add_to_map'
-      @Base.mixin @Mix
+        @definition_with_extension 'urn:organisation-id', (data) -> data.tenantId
+        @definition_with_extension 'urn:nothing', 'nowhere'
 
-      @Base.add_to_collection 'collection value 1'
-      @Base.add_to_collection (event) -> event.collectionValue2
-      @Base.nest_add_to_collection 'nested collection value 1'
-      @Base.nest_add_to_collection (event) -> event.nestedCollectionValue2
+        @definition_interaction_type 'none'
+        @definition_add_choice 'Jump out the window'
+        @definition_add_choice 'Stay inside and play xBox'
 
-      @Base.add_to_map 'map_value_1', 'map value 1'
-      @Base.add_to_map 'map_value_2', (event) -> event.mapValue2
-      @Base.nest_add_to_map 'nested_map_value_1', 'nested map value 1'
-      @Base.nest_add_to_map 'nested_map_value_2', (event) -> event.nestedMapValue2
+        @define 'emptyMap', as: TinFoilMap, with_alias: 'add_to_empty_map'
 
-      @compiled = @Base.compile @event
+      @Base.define 'scene', as: @Scene, with_prefix: 'scene_'
+
+      @compiled = @Base.compile @data
+
+    it 'should compile set properties', ->
+      @compiled.scene.objectType.should.equal 'Activity'
 
     it 'should compile static properties', ->
-      @compiled.property_1.should.equal 'property1'
+      @compiled.scene.definition.name['en-US'].should.equal 'Scene'
 
     it 'should compile dynamic properties', ->
-      @compiled.property_2.should.equal 'property2'
+      @compiled.scene.id.should.equal 'http://skilitix.com/xapi/activities/scene/1234-5678-abcd'
+      @compiled.scene.definition.description['en-US'].should.equal 'When Zombies Attack'
 
     it 'should compile nested properties', ->
-      @compiled.nest.nested.should.equal 'nested'
+      @compiled.scene.id.should.equal 'http://skilitix.com/xapi/activities/scene/1234-5678-abcd'
 
     it 'should compile mixed properties', ->
-      @compiled.mix.should.equal 'mixed'
+      @compiled.scene.definition.interactionType.should.equal 'none'
 
     it 'should not include properties with a value of "undefined"', ->
-      expect(@compiled.not_set).to.be.undefined
+      expect(@compiled.scene.moreinfo).to.be.undefined
 
     describe 'collections', ->
       it 'should not include empty collections', ->
-        expect(@compiled.empty_collection).to.be.undefined
+        expect(@compiled.scene.correctResponsePattern).to.be.undefined
 
       it 'should compile the collection', ->
-        @compiled.collection.should.be.an 'Array'
-        @compiled.collection[0].should.equal 'collection value 1'
-        @compiled.collection[1].should.equal 'collection value 2'
-
-      it 'should compile nested collections', ->
-        @compiled.nest.collection.should.be.an 'Array'
-        @compiled.nest.collection[0].should.equal 'nested collection value 1'
-        @compiled.nest.collection[1].should.equal 'nested collection value 2'
+        @compiled.scene.definition.choices[0].should.equal 'Jump out the window'
+        @compiled.scene.definition.choices[1].should.equal 'Stay inside and play xBox'
 
     describe 'maps', ->
       it 'should not indlue empty maps', ->
-        expect(@compiled.empty_map).to.be.undefined
+        expect(@compiled.scene.emptyMap).to.be.undefined
 
       it 'should compile the map', ->
-        @compiled.map.should.be.an 'Object'
-        @compiled.map['map_value_1'].should.equal 'map value 1'
-        @compiled.map['map_value_2'].should.equal 'map value 2'
-
-      it 'should compile nested maps', ->
-        @compiled.nest.map.should.be.an 'Object'
-        @compiled.nest.map['nested_map_value_1'].should.equal 'nested map value 1'
-        @compiled.nest.map['nested_map_value_2'].should.equal 'nested map value 2'
-
+        @compiled.scene.definition.extensions['urn:organisation-id'].should.equal '4321-8765-dcba'
+        @compiled.scene.definition.extensions['urn:nothing'].should.equal 'nowhere'
