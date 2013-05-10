@@ -334,6 +334,56 @@ describe 'TinFoil', ->
       @Extended.my_extension 'new-value'
       @Base.definition('extension').defaultValue.should.equal 'original-value'
 
+    it 'should instantiate new maps', ->
+      @Mappable = TinFoil.extend()
+      @Mappable.define 'map', as: TinFoilMap, with_alias: 'add_to_map'
+      @Base.define 'mappable', as: @Mappable
+
+      @Another = TinFoil.extend()
+      @Another.define 'mappable', as: @Mappable
+
+      @Base.add_to_map 'key 1', 'base value 1'
+      @Base.add_to_map 'key 2', 'base value 1'
+      @Another.add_to_map 'key 1', 'another value 2'
+      @Another.add_to_map 'key 2', 'another value 2'
+
+      @Base.definition('mappable').type
+        .definition('map').defaultValue.should.not.equal @Another.definition('mappable').type.definition('map').defaultValue
+
+      @Base.definition('mappable').type
+        .definition('map').defaultValue.get('key 1').should.equal 'base value 1'
+      @Base.definition('mappable').type
+        .definition('map').defaultValue.get('key 2').should.equal 'base value 2'
+      @Another.definition('mappable').type
+        .definition('map').defaultValue.get('key 1').should.equal 'another value 1'
+      @Another.definition('mappable').type
+        .definition('map').defaultValue.get('key 2').should.equal 'another value 2'
+
+    it 'should instantiate new collections', ->
+      @Collectable = TinFoil.extend()
+      @Collectable.define 'collection', as: TinFoilCollection, with_alias: 'add_to_collection'
+      @Base.define 'collectable', as: @Collectable
+
+      @Another = TinFoil.extend()
+      @Another.define 'collectable', as: @Collectable
+
+      @Base.add_to_collection 'base a'
+      @Base.add_to_collection 'base b'
+      @Another.add_to_collection 'another a'
+      @Another.add_to_collection 'another b'
+
+      @Base.definition('collectable').type
+        .definition('collection').defaultValue.should.not.equal @Another.definition('collectable').type.definition('collection').defaultValue
+
+      @Base.definition('collectable').type
+        .definition('collection').defaultValue.get(0).should.equal 'base a'
+      @Base.definition('collectable').type
+        .definition('collection').defaultValue.get(1).should.equal 'base b'
+      @Another.definition('collectable').type
+        .definition('collection').defaultValue.get(0).should.equal 'another a'
+      @Another.definition('collectable').type
+        .definition('collection').defaultValue.get(2).should.equal 'another b'
+
   describe 'compilation', ->
     Activity = require '../lib/activity'
 
@@ -388,6 +438,7 @@ describe 'TinFoil', ->
         expect(@compiled.scene.correctResponsePattern).to.be.undefined
 
       it 'should compile the collection', ->
+        @compiled.scene.definition.choices.length.should.equal 2
         @compiled.scene.definition.choices[0].should.equal 'Jump out the window'
         @compiled.scene.definition.choices[1].should.equal 'Stay inside and play xBox'
 
@@ -396,6 +447,6 @@ describe 'TinFoil', ->
         expect(@compiled.scene.emptyMap).to.be.undefined
 
       it 'should compile the map', ->
+        expect(@compiled.scene.definition.extensions['urn:tenant-id']).to.be.undefined
         @compiled.scene.definition.extensions['urn:organisation-id'].should.equal '4321-8765-dcba'
         @compiled.scene.definition.extensions['urn:nothing'].should.equal 'nowhere'
-        expect(@compiled.scene.definition.extensions['urn:tenant-id']).to.be.undefined
