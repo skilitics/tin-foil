@@ -287,9 +287,33 @@ describe 'TinFoil', ->
     it 'should still have the base aliases', ->
       @Base.keep_me.should.not.be.undefined
 
-    it 'should mix in nested definitions', ->
-      @Base.definition('tin').type.definition('tin_prop').defaultValue.should.equal 'tin-value'
+    it 'should instantiate new maps', ->
+      @Mappable = TinFoil.extend()
+      @Mappable.define 'map', as: TinFoilMap, with_alias: 'add_to_map'
+      @Base.mixin @Mappable
 
+      @Another = TinFoil.extend()
+      @Another.mixin @Mappable
+
+      @Base.add_to_map 'key', 'value 1'
+      @Another.add_to_map 'key', 'value 2'
+
+      @Base.definition('map').defaultValue.get('key').should.equal 'value 1'
+      @Another.definition('map').defaultValue.get('key').should.equal 'value 2'
+
+    it 'should instantiate new collections', ->
+      @Collectable = TinFoil.extend()
+      @Collectable.define 'collection', as: TinFoilCollection, with_alias: 'add_to_collection'
+      @Base.mixin @Collectable
+
+      @Another = TinFoil.extend()
+      @Another.mixin @Collectable
+
+      @Base.add_to_collection 'a'
+      @Another.add_to_collection 'b'
+
+      @Base.definition('collection').defaultValue.get(0).should.equal 'a'
+      @Another.definition('collection').defaultValue.get(0).should.equal 'b'
 
   describe 'extend', ->
 
@@ -374,3 +398,4 @@ describe 'TinFoil', ->
       it 'should compile the map', ->
         @compiled.scene.definition.extensions['urn:organisation-id'].should.equal '4321-8765-dcba'
         @compiled.scene.definition.extensions['urn:nothing'].should.equal 'nowhere'
+        expect(@compiled.scene.definition.extensions['urn:tenant-id']).to.be.undefined

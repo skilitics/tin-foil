@@ -22,9 +22,7 @@ class TinFoil
     Result
 
   @mixin: (obj) ->
-    for own name, prop of obj._definitions
-      @_definitions[name] = prop
-      @_mapDefinitionAliases prop
+    cloneProp name, prop, this for own name, prop of obj._definitions
     this
 
   @set: (name, options) ->
@@ -126,14 +124,11 @@ class TinFoil
     # TODO: Check alias name against keywords
     # TODO: Should we allow overriding aliases?
     @[alias] = (val) ->
-      def = @definition definition.name
+      name = definition.name
+      def = @definition name
       throw Error "Definition [#{name}] not found" unless def
-      @define definition.name,
-        type: def.type
-        defaultValue: val
-        aliases: def.aliases.slice(0)
-        prefix: def.prefix
-        false
+      cloneProp name, def, this
+      @definition(name).defaultValue = val
       this
 
     this
@@ -194,5 +189,12 @@ allDefinitions = (context, result = {}) ->
     allDefinitions context.__super__.constructor, result
 
   result
+
+cloneProp = (name, prop, context) ->
+  context.define name,
+    as: prop.type
+    defaultValue: prop.defaultValue
+    aliases: prop.aliases.slice(0)
+    prefix: prop.prefix
 
 module.exports = TinFoil
