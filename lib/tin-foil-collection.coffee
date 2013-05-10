@@ -8,8 +8,7 @@ class TinFoilCollection
     @collection.push item
     this
 
-  get: (index) ->
-    return @collection[index]
+  get: (index) -> @collection[index]
 
   compile: (event) ->
     result = []

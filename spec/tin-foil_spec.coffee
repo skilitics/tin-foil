@@ -99,17 +99,17 @@ describe 'TinFoil', ->
 
     it 'should allow adding aliases', ->
       @Base.define 'property', aliases: ['add_property', 'set_property']
-      expect(@Base.add_property).to.not.be.undefined
-      expect(@Base.set_property).to.not.be.undefined
+      @Base.add_property.should.not.be.undefined
+      @Base.set_property.should.not.be.undefined
 
     it 'should allow adding aliases via "with_aliases"', ->
       @Base.define 'property', with_aliases: ['add_property', 'set_property']
-      expect(@Base.add_property).to.not.be.undefined
-      expect(@Base.set_property).to.not.be.undefined
+      @Base.add_property.should.not.be.undefined
+      @Base.set_property.should.not.be.undefined
 
     it 'should allow adding a single aliases via "with_alias"', ->
       @Base.define 'property', with_alias: 'add_property'
-      expect(@Base.add_property).to.not.be.undefined
+      @Base.add_property.should.not.be.undefined
 
     it 'should allow setting a default value', ->
       @Base.define 'property', defaultValue: 'default'
@@ -153,8 +153,8 @@ describe 'TinFoil', ->
       @Base.define 'property', as: String, with_aliases: ['add_property', 'set_property'], default_as: 'default'
       definition = @Base.definition('property')
       definition.type.should.equal String
-      expect(@Base.add_property).to.not.be.undefined
-      expect(@Base.set_property).to.not.be.undefined
+      @Base.add_property.should.not.be.undefined
+      @Base.set_property.should.not.be.undefined
       definition.defaultValue.should.equal 'default'
       definition.defaultValue.should.equal 'default'
 
@@ -164,45 +164,61 @@ describe 'TinFoil', ->
   describe 'nested definitions', ->
 
     beforeEach ->
-      @SecondNest = TinFoil.extend()
-      @SecondNest.define 'second_nest_property', as: String, with_alias: 'set_second_nest_property'
+      @Activity = require '../lib/activity'
+      @ActivityDefinition = require '../lib/activity-definition'
 
-      @Nest = TinFoil.extend()
-      @Nest.define 'nested_property', as: String, with_alias: 'set_nested_property'
-      @Nest.define 'second_nest', as: @SecondNest, with_prefix: 'second_nest_'
-
-      @Base.define 'nest', as: @Nest
+      @Base.define 'activity', as: @Activity, with_prefix: 'activity_'
 
     it 'should be able to be set', ->
-      @Base.definition('nest').type.__super__.constructor.should.equal @Nest
-      @Nest.definition('second_nest').type.__super__.constructor.should.equal @SecondNest
+      @Base.definition('activity').should.not.be.undefined
+      @Activity.definition('definition').should.not.be.undefined
+      @Base.definition('activity').type.definition('definition').should.not.be.undefined
 
     it 'should map the nested definition aliases', ->
-      @Base.set_nested_property.should.equal @Nest.set_nested_property
-      @Base.second_nest_set_second_nest_property.should.equal @SecondNest.set_second_nest_property
+      @Base.activity_identified_as.should.not.be.undefined
+      @Base.activity_identify_from.should.not.be.undefined
+      @Base.activity_definition_named.should.not.be.undefined
+      @Base.activity_definition_name_from.should.not.be.undefined
+      @Base.activity_definition_with_extension.should.not.be.undefined # TinFoilMap
+      @Base.activity_definition_add_choice.should.not.be.undefined # TinFoilCollection
 
     it 'should be able to set static defaults on nested definitions', ->
-      @Base.set_nested_property 'nested-value'
-      @Base.definition('nest').type
-        .definition('nested_property').defaultValue.should.equal 'nested-value'
-      @Base.second_nest_set_second_nest_property 'second-nested-value'
-      @Base.definition('nest').type
-        .definition('nested_property').type
-        .definition('second_nest').defaultValue.should.equal 'second-nested-value'
+      @Base.activity_identified_as '/activities/scene/123'
+      @Base.definition('activity').type
+        .definition('id').defaultValue.should.equal '/activities/scene/123'
+      @Base.activity_definition_named 'scene'
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('name').defaultValue.should.equal 'scene'
 
     it 'should be able to set dynamic defaults on nested definitions', ->
-      @Base.set_nested_property -> 'a-dynamic-value'
-      @Base.second_nest_set_second_nest_property -> 'a-nested-dynamic-value'
-      @Base.definition('nest').type
-        .definition('nested_property').defaultValue().should.equal 'a-dynamic-value'
-      @Base.definition('nest').type
-        .definition('nested_property').type
-        .definition('second_nest').defaultValue().should.equal 'a-nested-dynamic-value'
+      @Base.activity_identify_from (data) -> "/activities/scene/#{data.scene.id}"
+      @Base.definition('activity').type
+        .definition('id').defaultValue(scene: id: '123').should.equal '/activities/scene/123'
+      @Base.activity_definition_description_from (data) -> data.scene.title
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('description').defaultValue(scene: title: 'Zombies attack!').should.equal 'Zombies attack!'
 
-    it 'should be able to prefix the nested definitions', ->
-      @Base.define 'prefixed_nest', as: @Nest, with_prefix: 'nest_'
-      @Base.nest_add_nested_alias.should.not.be.undefined
-      @Base.nest_add_nested_alias.should.equal @Nest.add_nested_alias
+    it 'should be able to add to nested maps', ->
+      @Base.activity_definition_with_extension 'urn:organisation-id', '123'
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('extensions').defaultValue.get('urn:organisation-id').should.equal '123'
+      @Base.activity_definition_with_extension 'urn:tenant-id', (data) -> data.tenantId
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('extensions').defaultValue.get('urn:tenant-id')(tenantId: '123').should.equal '123'
+
+    it 'should be able to add to nested collections', ->
+      @Base.activity_definition_add_choice 'a'
+      @Base.activity_definition_add_choice (data) -> data.choice
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('choices').defaultValue.get(0).should.equal 'a'
+      @Base.definition('activity').type
+        .definition('definition').type
+        .definition('choices').defaultValue.get(1)(choice: 'b').should.equal 'b'
 
   describe 'collections', ->
 
@@ -235,14 +251,17 @@ describe 'TinFoil', ->
     it 'should allow adding static properties to the map', ->
       @Base.add_to_map 'some-key', 'some-value'
       @Base.add_to_map 'another-key', 'another-value'
-      @Base.compile().map['some-key'].should.equal 'some-value'
-      @Base.compile().map['another-key'].should.equal 'another-value'
+      @Base.definition('map').defaultValue.get('some-key').should.equal 'some-value'
+      @Base.definition('map').defaultValue.get('another-key').should.equal 'another-value'
 
     it 'should allow adding dynamic properties to the map', ->
       @Base.add_to_map 'some-key', -> 'some-value'
       @Base.add_to_map 'another-key', -> 'another-value'
-      @Base.compile().map['some-key'].should.equal 'some-value'
-      @Base.compile().map['another-key'].should.equal 'another-value'
+      @Base.definition('map').defaultValue.get('some-key')().should.equal 'some-value'
+      @Base.definition('map').defaultValue.get('another-key')().should.equal 'another-value'
+
+    it 'should not alter the base', ->
+      expect(=> @Base.definition('map').defaultValue.get('some-key')).to.throw()
 
   describe 'mixins', ->
 

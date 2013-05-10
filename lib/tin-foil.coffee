@@ -1,7 +1,7 @@
 TinFoilCollection = require './tin-foil-collection'
 TinFoilMap = require './tin-foil-map'
 
-keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasDefinition', 'add', 'compile', '_mapDefinitionAliases', '_mapNormalAlias',
+keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasDefinition', 'add', 'compile', '_mapDefinitionAliases', '_mapDefinitionAlias',
             '_mapNestedAliases', '_mapTinFoilCollectionAlias', '_mapTinFoilMapAlias']
 
 class TinFoil
@@ -32,7 +32,7 @@ class TinFoil
 
     @define name,
       as: options.as or {}
-      default_as: options.to or options.defaultAs or options
+      defaultValue: options.to or options.defaultAs or options
       aliases: options.with_aliases or options.aliases or []
 
   @definition: (name) ->
@@ -61,6 +61,7 @@ class TinFoil
     # Special types
     if type.isTinFoil
       type = type.extend()
+      defaultValue = null
 
     if type is TinFoilCollection or type is TinFoilMap
       defaultValue = new type
@@ -73,16 +74,17 @@ class TinFoil
       type: type
       defaultValue: defaultValue
       aliases: aliases
+      prefix: prefix
 
     @_mapDefinitionAliases definition, prefix if mapAliases
 
     this
 
-  # TODO: Make this an instance method
+  # TODO: Make this an instance method?
   @compile: (data) ->
     object = {}
 
-    for own name, property of @_definitions
+    for own name, property of @definitions()
       val = null
 
       if property.type.isTinFoil
@@ -107,21 +109,20 @@ class TinFoil
     aliases = definition.aliases
 
     if type?.isTinFoil
-      method = @_mapTinFoilAlias
+      @_mapTinFoilDefinitionAliases definition, prefix
+      return this
 
-    else if type == TinFoilCollection
+    if type == TinFoilCollection
       method = @_mapTinFoilCollectionAlias
-
     else if type == TinFoilMap
       method = @_mapTinFoilMapAlias
-
     else
-      method = @_mapNormalAlias
+      method = @_mapDefinitionAlias
 
     method.call this, definition, "#{prefix}#{alias}" for alias in aliases
     this
 
-  @_mapNormalAlias: (definition, alias) ->
+  @_mapDefinitionAlias: (definition, alias) ->
     # TODO: Check alias name against keywords
     # TODO: Should we allow overriding aliases?
     @[alias] = (val) ->
@@ -131,14 +132,25 @@ class TinFoil
         type: def.type
         defaultValue: val
         aliases: def.aliases.slice(0)
+        prefix: def.prefix
         false
       this
 
     this
 
-  @_mapTinFoilAlias: (definition, alias) ->
-    for own name, definition of type.definitions
-      @_mapDefinitionAliases name, "#{prefix}#{name}"
+  @_mapTinFoilDefinitionAliases: (definition, prefix) ->
+    for own name, def of definition.type.definitions()
+      if def.type.isTinFoil
+        @_mapTinFoilDefinitionAliases def, "#{prefix}#{def.prefix}"
+
+      else
+        for alias in def.aliases
+          @["#{prefix}#{alias}"] = ((definition, alias) ->
+            if def.type is TinFoilMap
+              (key, val) -> definition.type["#{alias}"](key, val)
+            else
+              (val) -> definition.type["#{alias}"](val)
+          )(definition, alias)
 
     this
 
