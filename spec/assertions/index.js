@@ -1,2 +1,2 @@
-require("./prop");
+require("./definition");
 require("./alias");

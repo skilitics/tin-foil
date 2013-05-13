@@ -1,20 +1,20 @@
 { Assertion } = require 'chai'
 
-Assertion.addMethod 'prop', (name, value) ->
+Assertion.addMethod 'definition', (name, value) ->
   obj = this._obj
 
-  hasProp = obj.hasDefinition name
+  hasDefinition = obj.hasDefinition name
 
   this.assert(
-    hasProp
-    'expected #{this} to have prop \'' + name + '\' set'
-    'expected #{this} to not have prop \'' + name + '\' set'
+    hasDefinition
+    'expected #{this} to have definition \'' + name + '\' set'
+    'expected #{this} to not have definition \'' + name + '\' set'
     name
     obj.props
   )
 
   if value
-    valueSet = obj.get(name).value
+    valueSet = obj.definition(name).defaultValue
 
     this.assert(
       valueSet == value
