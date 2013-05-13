@@ -1,0 +1,4 @@
+--compilers coffee:coffee-script
+--recursive
+--reporter spec
+--ui bdd

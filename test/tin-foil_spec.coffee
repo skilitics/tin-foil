@@ -512,6 +512,11 @@ describe 'TinFoil', ->
 
       @Base.define 'scene', as: @Scene, with_prefix: 'scene_'
 
+      @Base.set 'undef', to: undefined
+      @Base.set 'nul', to: null
+      @Base.set 'fals', to: false
+      @Base.set 'zero', to: 0
+
       @compiled = @Base.compile @data
 
     it 'should compile set properties', ->
@@ -531,7 +536,17 @@ describe 'TinFoil', ->
       @compiled.scene.definition.interactionType.should.equal 'none'
 
     it 'should not include properties with a value of "undefined"', ->
-      expect(@compiled.scene.moreinfo).to.be.undefined
+      expect(@compiled.undef).to.be.undefined
+
+    it 'should not include properties with a value of "null"', ->
+      expect(@compiled.nul).to.be.undefined
+
+    it 'should include properties with a value of "false"', ->
+      @compiled.fals.should.equal false
+
+    it 'should include properties with a value of "0"', ->
+      @compiled.zero.should.equal 0
+
 
     describe 'collections', ->
       it 'should not include empty collections', ->

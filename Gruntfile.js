@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
   var config = {
     lib: 'lib',
-    spec: 'spec',
+    test: 'test',
     tmp: '.tmp'
   };
 
@@ -17,38 +17,13 @@ module.exports = function(grunt) {
       lib: {
         files: [
           '<%= config.lib %>/**/*.coffee',
-          '<%= config.spec %>/**/*.coffee'
+          '<%= config.test %>/**/*.coffee'
         ],
-        tasks: ['spec']
-      },
-      compiled: {
-        files: [
-          '<%= config.tmp %>/<%= config.lib %>/**/*.js',
-          '<%= config.tmp %>/<%= config.spec %>/**/*.js'
-        ],
-        tasks: ['spec:compiled']
-      }
-    },
-    clean: {
-      server: '<%= config.tmp %>'
-    },
-    coffee: {
-      compile: {
-        expand: true,
-        src: [
-          '<%= config.lib %>/**/*.coffee',
-          '<%= config.spec %>/**/*.coffee'
-        ],
-        dest: '<%= config.tmp %>',
-        ext: '.js',
-        options: {
-          sourceMap: true
-        }
+        tasks: ['test']
       }
     },
     mochaTest: {
-      lib: ['<%= config.spec %>/**/*_spec.coffee'],
-      compiled: ['<%= config.tmp %>/<%= config.spec %>/**/*_spec.js']
+      lib: ['<%= config.test %>/**/*.coffee']
     },
     mochaTestConfig: {
       lib: {
@@ -56,18 +31,13 @@ module.exports = function(grunt) {
           reporter: 'spec',
           compiler: 'coffee:coffee-script'
         }
-      },
-      compiled: {
-        options: {
-          reporter: 'spec'
-        }
       }
     }
   });
 
   grunt.registerTask('compile', ['coffee:compile']);
-  grunt.registerTask('spec', ['mochaTest:lib']);
-  grunt.registerTask('spec:compiled', [
+  grunt.registerTask('test', ['mochaTest:lib']);
+  grunt.registerTask('test:compiled', [
     'coffee:compile',
     'mochaTest:compiled'
   ]);
