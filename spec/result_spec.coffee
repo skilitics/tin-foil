@@ -7,8 +7,6 @@ describe 'Result', ->
 
   describe 'score', ->
     props.shouldHaveDefinition 'result', 'score'
-    props.shouldHaveAlias 'result', 'score', 'scored'
-    props.shouldHaveAlias 'result', 'score', 'score_from'
 
     it 'should validate as a ScoreObject'
 

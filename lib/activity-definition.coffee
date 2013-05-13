@@ -12,6 +12,6 @@ class ActivityDefinition extends TinFoil
   @define 'type', as: URI, with_aliases: ['typed_as', 'type_from']
   @define 'moreinfo', as: URL, with_aliases: ['more_info_as', 'more_info_from']
   @mixin InteractionActivities
-  @define 'extensions', as: TinFoilMap, with_aliases: ['with_extension']
+  @define 'extensions', as: TinFoilMap, with_alias: 'with_extension'
 
 module.exports = ActivityDefinition

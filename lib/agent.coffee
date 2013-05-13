@@ -5,7 +5,7 @@ class Agent extends TinFoil
 
   @set 'objectType', to: 'Agent'
 
-  @define 'name', as: String, aliases: ['named', 'name_from']
+  @define 'name', as: String, with_aliases: ['named', 'name_from']
 
   @mixin InverseFunctionalIdentifer
 
