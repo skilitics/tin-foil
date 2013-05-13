@@ -6,23 +6,22 @@ keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasDefinition', 'add', 'co
 
 class TinFoil
 
-  constructor: ->
-    @properties = {}
-    @properties[name] = @buildProperty definition for own name, definition of @_definitions
-
-  buildProperty: (definition) ->
-    name: definition.name
-    type: definition.type
-    value: definition.defaultValue
-
   @extend: (statics) ->
     class Result extends this
     Result.mixin(statics) if statics
     Result._definitions = {}
+
+    for own name, def of Result.definitions()
+      if def.type is TinFoilMap or def.type is TinFoilCollection
+        cloneDefinition name, def, Result
+
+      if def.type.isTinFoil
+        cloneDefinition name, def, Result
+
     Result
 
   @mixin: (obj) ->
-    cloneProp name, prop, this for own name, prop of obj._definitions
+    cloneDefinition name, prop, this for own name, prop of obj._definitions
     this
 
   @set: (name, options) ->
@@ -62,7 +61,7 @@ class TinFoil
       defaultValue = null
 
     if type is TinFoilCollection or type is TinFoilMap
-      defaultValue = new type
+      defaultValue = defaultValue?.extend() or new type
 
     # We don't want to re-create aliases if it already exists
     if @_definitions[name] then mapAliases = false
@@ -127,7 +126,7 @@ class TinFoil
       name = definition.name
       def = @definition name
       throw Error "Definition [#{name}] not found" unless def
-      cloneProp name, def, this
+      cloneDefinition name, def, this
       @definition(name).defaultValue = val
       this
 
@@ -190,11 +189,11 @@ allDefinitions = (context, result = {}) ->
 
   result
 
-cloneProp = (name, prop, context) ->
+cloneDefinition = (name, definition, context) ->
   context.define name,
-    as: prop.type
-    defaultValue: prop.defaultValue
-    aliases: prop.aliases.slice(0)
-    prefix: prop.prefix
+    as: definition.type
+    defaultValue: definition.defaultValue
+    aliases: definition.aliases
+    prefix: definition.prefix
 
 module.exports = TinFoil

@@ -119,6 +119,104 @@ describe 'TinFoil', ->
       @Base.define 'property', default_as: 'default'
       @Base.definition('property').defaultValue.should.equal 'default'
 
+    describe 'when the type is a TinFoilObject', ->
+
+      beforeEach ->
+        @Mappable = TinFoil.extend()
+        @Mappable.define 'map', as: TinFoilMap, with_alias: 'add_to_map'
+        @Collectable = TinFoil.extend()
+        @Collectable.define 'collection', as: TinFoilCollection, with_alias: 'add_to_collection'
+
+        @Base.define 'mappable', as: @Mappable, with_prefix: 'map_'
+        @Base.define 'collectable', as: @Collectable, with_prefix: 'collection_'
+        @Base.map_add_to_map 'existing-key', 'existing value'
+        @Base.collection_add_to_collection 'existing value'
+        @BaseNest = @Base.extend()
+
+        @SecondBase = TinFoil.extend()
+        @SecondBase.define 'mappable', as: @Mappable, with_prefix: 'map_'
+        @SecondBase.define 'collectable', as: @Collectable, with_prefix: 'collection_'
+        @SecondBaseNest = @SecondBase.extend()
+
+        @Mappable.add_to_map 'mappable-key', 'mappable value 1'
+        @Mappable.add_to_map 'shared-key', 'mappable value 2'
+        @Base.map_add_to_map 'shared-key', 'base value 1'
+        @Base.map_add_to_map 'base-key', 'base value 2'
+        @SecondBase.map_add_to_map 'shared-key', 'second base value 1'
+        @SecondBase.map_add_to_map 'base-key', 'second base value 2'
+        @BaseNest.map_add_to_map 'shared-key', 'base nest value 1'
+        @BaseNest.map_add_to_map 'base-key', 'base nest value 2'
+        @SecondBaseNest.map_add_to_map 'shared-key', 'second base nest value 1'
+        @SecondBaseNest.map_add_to_map 'base-key', 'second base nest value 2'
+
+        @Collectable.add_to_collection 'collectable value 1'
+        @Collectable.add_to_collection 'collectable value 2'
+        @Base.collection_add_to_collection 'base value 1'
+        @Base.collection_add_to_collection 'base value 2'
+        @BaseNest.collection_add_to_collection 'base nest value 1'
+        @BaseNest.collection_add_to_collection 'base nest value 2'
+        @SecondBase.collection_add_to_collection 'second base value 1'
+        @SecondBase.collection_add_to_collection 'second base value 2'
+        @SecondBaseNest.collection_add_to_collection 'second base nest value 1'
+        @SecondBaseNest.collection_add_to_collection 'second base nest value 2'
+
+      it 'should instantiate new maps', ->
+        @Mappable.definition('map').defaultValue.get('mappable-key').should.equal 'mappable value 1'
+        @Mappable.definition('map').defaultValue.get('shared-key').should.equal 'mappable value 2'
+        (=> @Mappable.definition('map').defaultValue.get('base-key')).should.throw()
+        (=> @Mappable.definition('map').defaultValue.get('existing-key')).should.throw()
+
+        (=> @Base.definition('mappable').type.definition('map').defaultValue.get('mappable-key')).should.throw()
+        @Base.definition('mappable').type.definition('map').defaultValue.get('shared-key').should.equal 'base value 1'
+        @Base.definition('mappable').type.definition('map').defaultValue.get('base-key').should.equal 'base value 2'
+        @Base.definition('mappable').type.definition('map').defaultValue.get('existing-key').should.equal 'existing value'
+
+        (=> @BaseNest.definition('mappable').type.definition('map').defaultValue.get('mappable-key')).should.throw()
+        @BaseNest.definition('mappable').type.definition('map').defaultValue.get('shared-key').should.equal 'base nest value 1'
+        @BaseNest.definition('mappable').type.definition('map').defaultValue.get('base-key').should.equal 'base nest value 2'
+        @BaseNest.definition('mappable').type.definition('map').defaultValue.get('existing-key').should.equal 'existing value'
+
+        (=> @SecondBase.definition('mappable').type.definition('map').defaultValue.get('mappable-key')).should.throw()
+        (=> @SecondBase.definition('mappable').type.definition('map').defaultValue.get('existing-key')).should.throw()
+        @SecondBase.definition('mappable').type.definition('map').defaultValue.get('shared-key').should.equal 'second base value 1'
+        @SecondBase.definition('mappable').type.definition('map').defaultValue.get('base-key').should.equal 'second base value 2'
+
+        (=> @SecondBaseNest.definition('mappable').type.definition('map').defaultValue.get('mappable-key')).should.throw()
+        (=> @SecondBaseNest.definition('mappable').type.definition('map').defaultValue.get('existing-key')).should.throw()
+        @SecondBaseNest.definition('mappable').type.definition('map').defaultValue.get('shared-key').should.equal 'second base nest value 1'
+        @SecondBaseNest.definition('mappable').type.definition('map').defaultValue.get('base-key').should.equal 'second base nest value 2'
+
+      it 'should inherit existing map values', ->
+        @BaseNest.definition('mappable').type.definition('map').defaultValue.get('existing-key').should.equal 'existing value'
+
+      it 'should instantiate new collections', ->
+        @Collectable.definition('collection').defaultValue.collection.length.should.equal 2
+        @Collectable.definition('collection').defaultValue.get(0).should.equal 'collectable value 1'
+        @Collectable.definition('collection').defaultValue.get(1).should.equal 'collectable value 2'
+
+        @Base.definition('collectable').type.definition('collection').defaultValue.collection.length.should.equal 3
+        @Base.definition('collectable').type.definition('collection').defaultValue.get(0).should.equal 'existing value'
+        @Base.definition('collectable').type.definition('collection').defaultValue.get(1).should.equal 'base value 1'
+        @Base.definition('collectable').type.definition('collection').defaultValue.get(2).should.equal 'base value 2'
+
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.collection.length.should.equal 3
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.get(0).should.equal 'existing value'
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.get(1).should.equal 'base nest value 1'
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.get(2).should.equal 'base nest value 2'
+
+        @SecondBase.definition('collectable').type.definition('collection').defaultValue.collection.length.should.equal 2
+        @SecondBase.definition('collectable').type.definition('collection').defaultValue.get(0).should.equal 'second base value 1'
+        @SecondBase.definition('collectable').type.definition('collection').defaultValue.get(1).should.equal 'second base value 2'
+
+        @SecondBaseNest.definition('collectable').type.definition('collection').defaultValue.collection.length.should.equal 2
+        @SecondBaseNest.definition('collectable').type.definition('collection').defaultValue.get(0).should.equal 'second base nest value 1'
+        @SecondBaseNest.definition('collectable').type.definition('collection').defaultValue.get(1).should.equal 'second base nest value 2'
+
+      it 'should inherit existing collection values', ->
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.collection.length.should.equal 3
+        @BaseNest.definition('collectable').type.definition('collection').defaultValue.get(0).should.equal 'existing value'
+
+
     it 'should be chainable', ->
       @Base.define('property').should.equal @Base
 
@@ -343,8 +441,8 @@ describe 'TinFoil', ->
       @Another.define 'mappable', as: @Mappable
 
       @Base.add_to_map 'key 1', 'base value 1'
-      @Base.add_to_map 'key 2', 'base value 1'
-      @Another.add_to_map 'key 1', 'another value 2'
+      @Base.add_to_map 'key 2', 'base value 2'
+      @Another.add_to_map 'key 1', 'another value 1'
       @Another.add_to_map 'key 2', 'another value 2'
 
       @Base.definition('mappable').type
@@ -382,7 +480,7 @@ describe 'TinFoil', ->
       @Another.definition('collectable').type
         .definition('collection').defaultValue.get(0).should.equal 'another a'
       @Another.definition('collectable').type
-        .definition('collection').defaultValue.get(2).should.equal 'another b'
+        .definition('collection').defaultValue.get(1).should.equal 'another b'
 
   describe 'compilation', ->
     Activity = require '../lib/activity'
@@ -394,21 +492,21 @@ describe 'TinFoil', ->
           id: '1234-5678-abcd'
           title: 'When Zombies Attack'
 
-      class @Scene extends Activity
-        @identify_from (data) -> "http://skilitix.com/xapi/activities/scene/#{data.scene.id}"
+      @Scene = Activity.extend()
+      @Scene.identify_from (data) -> "http://skilitix.com/xapi/activities/scene/#{data.scene.id}"
 
-        @definition_named 'en-US': 'Scene'
-        @definition_description_from (data) -> 'en-US': data.scene.title
-        @definition_typed_as 'http://skilitix.com/xapi/activities/node'
+      @Scene.definition_named 'en-US': 'Scene'
+      @Scene.definition_description_from (data) -> 'en-US': data.scene.title
+      @Scene.definition_typed_as 'http://skilitix.com/xapi/activities/node'
 
-        @definition_with_extension 'urn:organisation-id', (data) -> data.tenantId
-        @definition_with_extension 'urn:nothing', 'nowhere'
+      @Scene.definition_with_extension 'urn:organisation-id', (data) -> data.tenantId
+      @Scene.definition_with_extension 'urn:nothing', 'nowhere'
 
-        @definition_interaction_type 'none'
-        @definition_add_choice 'Jump out the window'
-        @definition_add_choice 'Stay inside and play xBox'
+      @Scene.definition_interaction_type 'none'
+      @Scene.definition_add_choice 'Jump out the window'
+      @Scene.definition_add_choice 'Stay inside and play xBox'
 
-        @define 'emptyMap', as: TinFoilMap, with_alias: 'add_to_empty_map'
+      @Scene.define 'emptyMap', as: TinFoilMap, with_alias: 'add_to_empty_map'
 
       @Base.define 'scene', as: @Scene, with_prefix: 'scene_'
 

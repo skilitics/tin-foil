@@ -10,6 +10,13 @@ class TinFoilCollection
 
   get: (index) -> @collection[index]
 
+  extend: ->
+    tinFoilCollection = new TinFoilCollection
+    for item in @collection
+      tinFoilCollection.add item
+
+    tinFoilCollection
+
   compile: (event) ->
     result = []
     for item in @collection

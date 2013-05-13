@@ -13,6 +13,13 @@ class TinFoilMap
     throw Error "#{key} not found in map" unless value
     value
 
+  extend: ->
+    tinFoilMap = new TinFoilMap
+    for own key, value of @map
+      tinFoilMap.add key, value
+
+    tinFoilMap
+
   compile: (event) ->
     map = {}
     hasKeys = false
