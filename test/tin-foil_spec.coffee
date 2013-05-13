@@ -127,7 +127,7 @@ describe 'TinFoil', ->
       @Base.define 'property', default_as: 'default'
       @Base.definition('property').defaultValue.should.equal 'default'
 
-    describe 'when the type is a TinFoilObject', ->
+    describe 'when the type is a TinFoil', ->
 
       beforeEach ->
         @Mappable = TinFoil.extend()
