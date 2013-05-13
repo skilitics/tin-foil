@@ -27,7 +27,8 @@ class TinFoil
     this
 
   @set: (name, options) ->
-    throw 'You must provide a value or set of options when setting a definition' unless options?
+    if !options?
+      throw new Error 'You must provide a value or set of options when setting a definition'
 
     @define name,
       as: valueFrom options, {}, 'as'
@@ -36,7 +37,10 @@ class TinFoil
 
   @definition: (name) ->
     definition = findDefinition this, name
-    throw Error "Property [#{name}] has not been defined" unless definition
+
+    if !definition
+      throw new Error "Property [#{name}] has not been defined"
+
     definition
 
   @hasDefinition: (name) -> findDefinition this, name
@@ -127,7 +131,10 @@ class TinFoil
     @[alias] = (val) ->
       name = definition.name
       def = @definition name
-      throw Error "Definition [#{name}] not found" unless def
+
+      if !def
+        throw new Error "Definition [#{name}] not found"
+
       cloneDefinition name, def, this
       @definition(name).defaultValue = val
       this
