@@ -7,8 +7,7 @@ module.exports = function(grunt) {
 
   var config = {
     lib: 'lib',
-    test: 'test',
-    tmp: '.tmp'
+    test: 'test'
   };
 
   grunt.initConfig({
@@ -28,19 +27,13 @@ module.exports = function(grunt) {
     mochaTestConfig: {
       lib: {
         options: {
-          reporter: 'spec',
-          compiler: 'coffee:coffee-script'
+//          reporter: 'spec'
         }
       }
     }
   });
 
-  grunt.registerTask('compile', ['coffee:compile']);
   grunt.registerTask('test', ['mochaTest:lib']);
-  grunt.registerTask('test:compiled', [
-    'coffee:compile',
-    'mochaTest:compiled'
-  ]);
 
   // Default task.
   grunt.registerTask('default', ['mochaTest:lib']);
