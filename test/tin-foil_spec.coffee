@@ -35,6 +35,14 @@ describe 'TinFoil', ->
       @Base.set 'property', 'a-static-value'
       @Base.definition('property').defaultValue.should.equal 'a-static-value'
 
+    it 'should allow setting a static definition default to "false"', ->
+      @Base.set 'property', false
+      @Base.definition('property').defaultValue.should.equal false
+
+    it 'should allow setting a static definition default to "0"', ->
+      @Base.set 'property', 0
+      @Base.definition('property').defaultValue.should.equal 0
+
     it 'should allow setting a definition with the "to" option', ->
       @Base.set 'property', to: 'a-static-value'
       @Base.definition('property').defaultValue.should.equal 'a-static-value'
@@ -512,10 +520,10 @@ describe 'TinFoil', ->
 
       @Base.define 'scene', as: @Scene, with_prefix: 'scene_'
 
-      @Base.set 'undef', to: undefined
-      @Base.set 'nul', to: null
-      @Base.set 'fals', to: false
-      @Base.set 'zero', to: 0
+      @Base.define 'undef', as: {}
+      @Base.define 'nul', as: {}
+      @Base.set 'fals', false
+      @Base.set 'zero', 0
 
       @compiled = @Base.compile @data
 
@@ -536,7 +544,7 @@ describe 'TinFoil', ->
       @compiled.scene.definition.interactionType.should.equal 'none'
 
     it 'should not include properties with a value of "undefined"', ->
-      expect(@compiled.undef).to.be.undefined
+      expect(@compiled.moreinfo).to.be.undefined
 
     it 'should not include properties with a value of "null"', ->
       expect(@compiled.nul).to.be.undefined
@@ -558,7 +566,7 @@ describe 'TinFoil', ->
         @compiled.scene.definition.choices[1].should.equal 'Stay inside and play xBox'
 
     describe 'maps', ->
-      it 'should not indlue empty maps', ->
+      it 'should not include empty maps', ->
         expect(@compiled.scene.emptyMap).to.be.undefined
 
       it 'should compile the map', ->

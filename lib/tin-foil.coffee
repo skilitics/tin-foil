@@ -27,12 +27,12 @@ class TinFoil
     this
 
   @set: (name, options) ->
-    throw 'You must provide a value or set of options when setting a definition' unless options
+    throw 'You must provide a value or set of options when setting a definition' unless options?
 
     @define name,
-      as: options.as or {}
-      defaultValue: options.to or options.defaultAs or options
-      aliases: options.with_aliases or options.aliases or []
+      as: valueFrom options, {}, 'as'
+      defaultValue: valueFrom options, null, 'to', 'defaultAs', ''
+      aliases: valueFrom options, [], 'with_aliases', 'aliases'
 
   @definition: (name) ->
     definition = findDefinition this, name
@@ -47,10 +47,10 @@ class TinFoil
     @_definitions ?= {}
 
     if options
-      type = options.as or options.type or {}
-      defaultValue = options.default_as or options.defaultValue or null
+      type = valueFrom options, {}, 'as', 'type'
+      defaultValue = valueFrom options, null, 'default_as', 'defaultValue'
       aliases = if options.with_alias then [options.with_alias] else options.with_aliases or options.aliases or []
-      prefix = options.with_prefix or options.prefix or ''
+      prefix = valueFrom options, '', 'with_prefix', 'prefix'
     else
       type = {}
       defaultValue = null
@@ -92,13 +92,13 @@ class TinFoil
       else if property.type is TinFoilCollection or property.type is TinFoilMap
         val = property.defaultValue.compile data
 
-      else if property.defaultValue
+      else if property.defaultValue?
         if property.defaultValue instanceof Function
           val = property.defaultValue.call this, data
         else
           val = property.defaultValue
 
-      object[name] = val if val
+      object[name] = val if val?
 
     object
 
@@ -197,5 +197,14 @@ cloneDefinition = (name, definition, context) ->
     defaultValue: definition.defaultValue
     aliases: definition.aliases
     prefix: definition.prefix
+
+valueFrom = (obj, defaultValue, aliases...) ->
+  return defaultValue unless obj?
+
+  for alias in aliases
+    return obj if alias is ''
+    return obj[alias] if typeof obj[alias] isnt 'undefined'
+
+  return defaultValue
 
 module.exports = TinFoil
