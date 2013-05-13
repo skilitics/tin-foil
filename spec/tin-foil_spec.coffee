@@ -492,21 +492,23 @@ describe 'TinFoil', ->
           id: '1234-5678-abcd'
           title: 'When Zombies Attack'
 
-      @Scene = Activity.extend()
-      @Scene.identify_from (data) -> "http://skilitix.com/xapi/activities/scene/#{data.scene.id}"
+      class @Scene extends Activity
+        @inherit()
 
-      @Scene.definition_named 'en-US': 'Scene'
-      @Scene.definition_description_from (data) -> 'en-US': data.scene.title
-      @Scene.definition_typed_as 'http://skilitix.com/xapi/activities/node'
+        @identify_from (data) -> "http://skilitix.com/xapi/activities/scene/#{data.scene.id}"
 
-      @Scene.definition_with_extension 'urn:organisation-id', (data) -> data.tenantId
-      @Scene.definition_with_extension 'urn:nothing', 'nowhere'
+        @definition_named 'en-US': 'Scene'
+        @definition_description_from (data) -> 'en-US': data.scene.title
+        @definition_typed_as 'http://skilitix.com/xapi/activities/node'
 
-      @Scene.definition_interaction_type 'none'
-      @Scene.definition_add_choice 'Jump out the window'
-      @Scene.definition_add_choice 'Stay inside and play xBox'
+        @definition_with_extension 'urn:organisation-id', (data) -> data.tenantId
+        @definition_with_extension 'urn:nothing', 'nowhere'
 
-      @Scene.define 'emptyMap', as: TinFoilMap, with_alias: 'add_to_empty_map'
+        @definition_interaction_type 'none'
+        @definition_add_choice 'Jump out the window'
+        @definition_add_choice 'Stay inside and play xBox'
+
+        @define 'emptyMap', as: TinFoilMap, with_alias: 'add_to_empty_map'
 
       @Base.define 'scene', as: @Scene, with_prefix: 'scene_'
 

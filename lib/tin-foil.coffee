@@ -6,19 +6,21 @@ keywords = ['extend', 'mixin', 'set', 'get', 'prop', 'hasDefinition', 'add', 'co
 
 class TinFoil
 
-  @extend: (statics) ->
+  @extend: ->
     class Result extends this
-    Result.mixin(statics) if statics
-    Result._definitions = {}
+    Result.inherit()
+    Result
 
-    for own name, def of Result.definitions()
+  @inherit: ->
+    @_definitions = {}
+
+    for own name, def of @definitions()
       if def.type is TinFoilMap or def.type is TinFoilCollection
-        cloneDefinition name, def, Result
+        cloneDefinition name, def, this
 
       if def.type.isTinFoil
-        cloneDefinition name, def, Result
+        cloneDefinition name, def, this
 
-    Result
 
   @mixin: (obj) ->
     cloneDefinition name, prop, this for own name, prop of obj._definitions
