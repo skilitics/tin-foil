@@ -12,42 +12,35 @@ Define your verbs, objects and contexts by extending Verb, TinFoil and Context:
 **CoffeeScript**
 
 ``` CoffeeScript
-{ TinFoil } = require 'tin-foil'
+{ Activity } = require 'tin-foil'
 
-class SceneObject extends TinFoil
-  @of_type 'scene'
-  @identified_by (event) -> "/activities/scene/#{event.scene.id}"
-  @named_from (event) -> event.scene.title
+class SceneActivity extends Activity
+  @inherit()
+
+  @identify_from (event) -> "http://skilitix.com/xapi/activities/scene/#{event.scene.id}"
+
+  @definition_named 'en-US': 'Scene'
+  @definition_typed_as 'http://skilitix.com/xapi/activities/node'
+  @definition_description_from (event) -> 'en-US': event.scene.title
 ```
 
 **JavaScript**
 
 ``` JavaScript
-var SceneObject = TinFoil.extend()
-    .of_type('scene')
-    .identified_by(function (event) { return "/activities/scene/" + event.scene.id; })
-    .named_from(function (event) { return event.scene.title; });
+Activity = require('tin-foil').Activity;
+
+var SceneActivity = Activity.extend()
+    .identify_from(function (event) { return "http://skilitix.com/xapi/activities/scene/" + event.scene.id; })
+    .definition_named({'en-US': 'Scene'})
+    .definition_typed_as('http://skilitix.com/xapi/activities/node')
+    .definition_description_from(function (event) { return {'en-US': event.scene.title}; });
 ```
 
-Then define your statements
+Then define and compile your statements
 
 ``` CoffeeScript
-{ TinFoilEvent } = require '../tin_foil/tin_foil_event'
-
-class SceneEnteredEvent extends TinFoilEvent
-  @as 'user', i: 'entered', a: 'scene', in: 'scenario'
-```
-
-or build them on the fly
-
-``` CoffeeScript
-SceneEnteredEvent = Statement.as 'user', i: 'entered', a: 'scene', in: 'scenario'
-```
-
-and compile your events
-
-``` CoffeeScript
-tinCan = SceneEnteredEvent.compile(myEvent)
+SceneEnteredStatement = Statement.as 'user', i: 'entered', a: 'scene', in: 'scenario'
+SceneEnteredStatement.compile(myEvent)
 ```
 
 ## License
