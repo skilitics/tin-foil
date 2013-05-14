@@ -1,2 +1,0 @@
-require("./prop");
-require("./alias");

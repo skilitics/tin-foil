@@ -1,32 +1,32 @@
-props = require './props'
+props = require './definitions'
 
 exports.interactionActivities = (obj) ->
 
   describe 'interactionType', ->
-    props.shouldHaveProp obj, 'interactionType'
+    props.shouldHaveDefinition obj, 'interactionType'
 
   describe 'correctResponsePattern', ->
-    props.shouldHaveProp obj, 'correctResponsePattern'
+    props.shouldHaveDefinition obj, 'correctResponsePattern'
     props.shouldHaveAlias obj, 'correctResponsePattern', 'add_correct_response_pattern'
 
   describe 'choices', ->
-    props.shouldHaveProp obj, 'choices'
+    props.shouldHaveDefinition obj, 'choices'
     props.shouldHaveAlias obj, 'choices', 'add_choice'
 
 
 exports.inverseFunctionalIdentifier = (obj) ->
 
   describe 'mbox', ->
-    props.shouldHaveProp obj, 'mbox'
+    props.shouldHaveDefinition obj, 'mbox'
     props.shouldHaveAlias obj, 'mbox', 'mbox_as'
     props.shouldHaveAlias obj, 'mbox', 'mbox_from'
 
   describe 'mbox_sha1sum', ->
 
   describe 'openID', ->
-    props.shouldHaveProp obj, 'openID'
+    props.shouldHaveDefinition obj, 'openID'
     props.shouldHaveAlias obj, 'openID', 'openId_as'
     props.shouldHaveAlias obj, 'openID', 'openId_from'
 
   describe 'account', ->
-    props.shouldHaveProp obj, 'account'
+    props.shouldHaveDefinition obj, 'account'

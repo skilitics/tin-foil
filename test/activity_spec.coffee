@@ -1,6 +1,6 @@
 Activity = require '../lib/activity'
 #ActivityDefinition = require '../lib/activity-definition'
-props = require './behaviours/props'
+props = require './behaviours/definitions'
 
 should = require('chai').should()
 
@@ -10,16 +10,16 @@ describe 'Activity', ->
 
   describe 'objectType', ->
     it 'should be set to "Activity"', ->
-      @scene.should.have.prop 'objectType', 'Activity'
+      @scene.should.have.definition 'objectType', 'Activity'
 
   describe 'id', ->
-    props.shouldHaveProp 'scene', 'id'
+    props.shouldHaveDefinition 'scene', 'id'
     props.shouldHaveAlias 'scene', 'id', 'identified_as'
     props.shouldHaveAlias 'scene', 'id', 'identify_from'
 
     it 'should validate as a URI'
 
   describe 'definition', ->
-    props.shouldHaveProp 'scene', 'definition'
+    props.shouldHaveDefinition 'scene', 'definition'
 
-    it 'should validate as a TinFoilMap'
+    it 'should validate as an ActivityDefinition'

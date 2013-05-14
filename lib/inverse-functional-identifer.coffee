@@ -1,14 +1,14 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 AccountObject = require './account-object'
 
 URI = {}
 
-class InverseFunctionalIdentifer extends TinFoilObject
+class InverseFunctionalIdentifer extends TinFoil
 
-  @prop 'mbox', as: String, aliases: ['mbox_as', 'mbox_from']
+  @define 'mbox', as: String, with_aliases: ['mbox_as', 'mbox_from']
 #  @set 'mbox_sha1sum', -> toSha1Sum(@get('mbox').value)
 
-  @prop 'openID', as: URI, aliases: ['openId_as', 'openId_from']
-  @prop 'account', as: AccountObject
+  @define 'openID', as: URI, with_aliases: ['openId_as', 'openId_from']
+  @define 'account', as: AccountObject, with_prefix: 'account_'
 
 module.exports = InverseFunctionalIdentifer

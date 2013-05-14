@@ -1,8 +1,8 @@
-TinFoilObject = require './tin-foil-object'
+TinFoil = require './tin-foil'
 
-class AccountObject extends TinFoilObject
+class AccountObject extends TinFoil
 
-  @prop 'homepage', as: String, aliases: ['homepage_as', 'homepage_from']
-  @prop 'name', as: String, aliases: ['named', 'name_from']
+  @define 'homepage', as: String, with_aliases: ['homepage_as', 'homepage_from']
+  @define 'name', as: String, with_aliases: ['named', 'name_from']
 
 module.exports = AccountObject

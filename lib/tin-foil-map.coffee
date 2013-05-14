@@ -8,6 +8,20 @@ class TinFoilMap
     @map[key] = value
     this
 
+  get: (key) ->
+    value = @map[key]
+
+    if !value then throw Error "#{key} not found in map"
+
+    value
+
+  extend: ->
+    tinFoilMap = new TinFoilMap
+    for own key, value of @map
+      tinFoilMap.add key, value
+
+    tinFoilMap
+
   compile: (event) ->
     map = {}
     hasKeys = false

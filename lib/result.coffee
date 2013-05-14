@@ -1,14 +1,14 @@
-TinFoilObject = require './tin-foil-object'
-TinFoilCollection = require './tin-foil-collection'
-ScoreObject = {}
+TinFoil = require './tin-foil'
+TinFoilMap = require './tin-foil-map'
+ScoreObject = require './score-object'
 
-class Result extends TinFoilObject
+class Result extends TinFoil
 
-  @prop 'score', as: ScoreObject, aliases: ['scored', 'score_from']
-  @prop 'success', as: Boolean, aliases: ['success_as', 'success_from']
-  @prop 'completion', as: Boolean, aliases: ['completed', 'completion_from']
-  @prop 'response', as: String, aliases: ['response_as', 'response_from']
-  @prop 'duration', as: Date, aliases: ['duration_as', 'duration_from']
-  @prop 'extensions', as: TinFoilCollection, aliases: ['with_extension']
+  @define 'score', as: ScoreObject, with_prefix: 'score_'
+  @define 'success', as: Boolean, with_aliases: ['success_as', 'success_from']
+  @define 'completion', as: Boolean, with_aliases: ['completed', 'completion_from']
+  @define 'response', as: String, with_aliases: ['response_as', 'response_from']
+  @define 'duration', as: Date, with_aliases: ['duration_as', 'duration_from']
+  @define 'extensions', as: TinFoilMap, with_aliases: ['with_extension']
 
 module.exports = Result

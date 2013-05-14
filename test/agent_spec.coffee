@@ -1,5 +1,5 @@
 Agent = require '../lib/agent'
-props = require './behaviours/props'
+props = require './behaviours/definitions'
 shouldBehaveLike = require './behaviours/should-behave-like'
 
 describe 'Agent', ->
@@ -8,10 +8,10 @@ describe 'Agent', ->
 
   describe 'objectType', ->
     it 'should be set to "Agent"', ->
-      @agent.should.have.prop 'objectType', 'Agent'
+      @agent.should.have.definition 'objectType', 'Agent'
 
   describe 'name', ->
-    props.shouldHaveProp 'agent', 'name'
+    props.shouldHaveDefinition 'agent', 'name'
     props.shouldHaveAlias 'agent', 'name', 'named'
     props.shouldHaveAlias 'agent', 'name', 'name_from'
 

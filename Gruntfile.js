@@ -7,71 +7,51 @@ module.exports = function(grunt) {
 
   var config = {
     lib: 'lib',
-    spec: 'spec',
-    tmp: '.tmp'
+    test: 'test'
   };
 
   grunt.initConfig({
     config: config,
-    watch: {
-      lib: {
-        files: [
-          '<%= config.lib %>/**/*.coffee',
-          '<%= config.spec %>/**/*.coffee'
-        ],
-        tasks: ['spec']
-      },
-      compiled: {
-        files: [
-          '<%= config.tmp %>/<%= config.lib %>/**/*.js',
-          '<%= config.tmp %>/<%= config.spec %>/**/*.js'
-        ],
-        tasks: ['spec:compiled']
-      }
-    },
-    clean: {
-      server: '<%= config.tmp %>'
-    },
-    coffee: {
-      compile: {
-        expand: true,
-        src: [
-          '<%= config.lib %>/**/*.coffee',
-          '<%= config.spec %>/**/*.coffee'
-        ],
-        dest: '<%= config.tmp %>',
-        ext: '.js',
-        options: {
-          sourceMap: true
-        }
+    coffeelint: {
+      all: ['<%= config.lib %>/**/*.coffee', '<%= config.test %>/**/*.coffee'],
+      options: {
+        max_line_length: 'warn',
+        value: 1800
       }
     },
     mochaTest: {
-      lib: ['<%= config.spec %>/**/*_spec.coffee'],
-      compiled: ['<%= config.tmp %>/<%= config.spec %>/**/*_spec.js']
+      spec: ['<%= config.test %>/**/*.coffee'],
+      teamcity: ['<%= config.test %>/**/*.coffee'],
+      min: ['<%= config.test %>/**/*.coffee']
     },
     mochaTestConfig: {
-      lib: {
-        options: {
-          reporter: 'spec',
-          compiler: 'coffee:coffee-script'
-        }
-      },
-      compiled: {
+      spec: {
         options: {
           reporter: 'spec'
         }
+      },
+      min: {
+        options: {
+          reporter: 'min'
+        }
+      },
+      teamcity: {
+        options: {
+          reporter: 'teamcity'
+        }
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['<%= config.lib %>/**/*.coffee', '<%= config.test %>/**/*.coffee'],
+        tasks: ['lint', 'spec:min']
       }
     }
   });
 
-  grunt.registerTask('compile', ['coffee:compile']);
-  grunt.registerTask('spec', ['mochaTest:lib']);
-  grunt.registerTask('spec:compiled', [
-    'coffee:compile',
-    'mochaTest:compiled'
-  ]);
-
-  // Default task.
-  grunt.registerTask('default', ['mochaTest:lib']);
+  grunt.registerTask('lint', ['coffeelint:all']);
+  grunt.registerTask('spec', ['mochaTest:spec']);
+  grunt.registerTask('spec:min', ['mochaTest:min']);
+  grunt.registerTask('teamcity', [/*'lint', */'mochaTest:teamcity']);
+  grunt.registerTask('default', [/*'lint', */'spec']);
 };
