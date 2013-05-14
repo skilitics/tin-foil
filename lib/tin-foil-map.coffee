@@ -10,7 +10,9 @@ class TinFoilMap
 
   get: (key) ->
     value = @map[key]
-    throw Error "#{key} not found in map" unless value
+
+    if !value then throw Error "#{key} not found in map"
+
     value
 
   extend: ->
